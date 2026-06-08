@@ -396,6 +396,22 @@ a { text-decoration: none; color: inherit; }
 .rate-range-row svg { flex-shrink: 0; color: var(--text3); }
 .rate-range-row b { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text); }
 
+/* ── 경쟁도 배지 ─────────────────────────────── */
+.comp-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; font-weight: 800;
+  padding: 2px 7px; border-radius: var(--radius-chip);
+  border: 1px solid transparent; flex-shrink: 0;
+}
+.comp-badge.comp-low  { background: #dcfce7; color: #15803d; border-color: #86efac; }
+.comp-badge.comp-mid  { background: #fef9c3; color: #b45309; border-color: #fcd34d; }
+.comp-badge.comp-high { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+.comp-badge.comp-ref  { background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; }
+[data-theme="dark"] .comp-badge.comp-low  { background: #052e16; color: #4ade80; border-color: #166534; }
+[data-theme="dark"] .comp-badge.comp-mid  { background: #1c1600; color: #fbbf24; border-color: #854d0e; }
+[data-theme="dark"] .comp-badge.comp-high { background: #3b0a0a; color: #f87171; border-color: #7f1d1d; }
+[data-theme="dark"] .comp-badge.comp-ref  { background: #172035; color: #4e6487; border-color: #2a3a58; }
+
 .card-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.45; }
 
 .card-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 10px; }
@@ -768,10 +784,10 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbyHQNrpPcLyaRNxUS74Cft1
 /* ═══ 샘플 데이터 (GAS 연동 전 사용) ══════════════════════ */
 const SAMPLE_BIDS = [
   /* ── A 강추 ── */
-  { id:1, reliability:'A', rate:87.421, rateRange:'87.35 ~ 87.48', no:'SBG202406-0041', name:'상주동부초등학교 진입로 포장 및 기타공사', org:'상주교육지원청', zone:'경북', amount:187000000, deadline:'2026-06-12', type:'포장', restrict:false, score:95, grade:'A', reason:'선호지역(경북) 포장공사, 시공능력 적정, 경쟁업체 少', detailUrl:'https://www.g2b.go.kr/' },
+  { id:1, reliability:'A', rate:87.421, rateRange:'87.35 ~ 87.48', avgParticipants:42, competitionLevel:'낮음', no:'SBG202406-0041', name:'상주동부초등학교 진입로 포장 및 기타공사', org:'상주교육지원청', zone:'경북', amount:187000000, deadline:'2026-06-12', type:'포장', restrict:false, score:95, grade:'A', reason:'선호지역(경북) 포장공사, 시공능력 적정, 경쟁업체 少', detailUrl:'https://www.g2b.go.kr/' },
   { id:2, no:'SBG202406-0052', name:'상주~도청신도시간 도로건설구간 상수관 이설공사', org:'경북도청', zone:'경북', amount:243000000, deadline:'2026-06-22', type:'상하수도', restrict:false, score:92, grade:'A', reason:'선호지역(경북), 상하수도 면허 보유, 공공발주 고신뢰 기관', detailUrl:'https://www.g2b.go.kr/' },
-  { id:3, reliability:'B', rate:86.912, rateRange:'86.80 ~ 87.10', no:'SBG202406-0067', name:'대구 달성군 농촌 도로정비 및 배수로 개설공사', org:'달성군청', zone:'대구', amount:156000000, deadline:'2026-06-25', type:'토목', restrict:false, score:91, grade:'A', reason:'선호지역(대구), 토목공사 면허 적합, 금액 범위 최적', detailUrl:'https://www.g2b.go.kr/' },
-  { id:4, reliability:'C', rate:88.105, rateRange:'87.90 ~ 88.30', no:'SBG202406-0078', name:'대구 수성구 하수관로 정비공사', org:'대구광역시 수성구청', zone:'대구', amount:198000000, deadline:'2026-06-30', type:'상하수도', restrict:false, score:88, grade:'A', reason:'선호지역(대구), 상하수도 면허 보유, 관납실적 축적 가능', detailUrl:'https://www.g2b.go.kr/' },
+  { id:3, reliability:'B', rate:86.912, rateRange:'86.80 ~ 87.10', avgParticipants:86, competitionLevel:'보통', no:'SBG202406-0067', name:'대구 달성군 농촌 도로정비 및 배수로 개설공사', org:'달성군청', zone:'대구', amount:156000000, deadline:'2026-06-25', type:'토목', restrict:false, score:91, grade:'A', reason:'선호지역(대구), 토목공사 면허 적합, 금액 범위 최적', detailUrl:'https://www.g2b.go.kr/' },
+  { id:4, reliability:'C', rate:88.105, rateRange:'87.90 ~ 88.30', avgParticipants:130, competitionLevel:'높음', no:'SBG202406-0078', name:'대구 수성구 하수관로 정비공사', org:'대구광역시 수성구청', zone:'대구', amount:198000000, deadline:'2026-06-30', type:'상하수도', restrict:false, score:88, grade:'A', reason:'선호지역(대구), 상하수도 면허 보유, 관납실적 축적 가능', detailUrl:'https://www.g2b.go.kr/' },
   /* ── B 검토 ── */
   { id:5, no:'SBG202406-0089', name:'안동시 도시계획도로 개설공사', org:'안동시청', zone:'경북', amount:378000000, deadline:'2026-07-05', type:'토목', restrict:false, score:72, grade:'B', reason:'경북 소재이나 금액이 시공능력 상한에 근접, 경쟁 심화 예상', detailUrl:'https://www.g2b.go.kr/' },
   { id:6, no:'SBG202406-0101', name:'구미시 공단지역 우수 배수관로 개량공사', org:'구미시청', zone:'경북', amount:295000000, deadline:'2026-07-10', type:'상하수도', restrict:false, score:68, grade:'B', reason:'경북 소재, 면허 적합. 구미시 텃세 있는 지역으로 분류', detailUrl:'https://www.g2b.go.kr/' },
@@ -805,6 +821,8 @@ function normalizeBid(item, i) {
     rateMin:  item.rateMin !== '' && item.rateMin != null ? Number(item.rateMin) : '',
     rateMax:  item.rateMax !== '' && item.rateMax != null ? Number(item.rateMax) : '',
     rateRange: item.rateRange != null ? String(item.rateRange).trim() : '',
+    avgParticipants: item.avgParticipants !== '' && item.avgParticipants != null ? Number(item.avgParticipants) : '',
+    competitionLevel: item.competitionLevel != null ? String(item.competitionLevel).trim() : '',
   };
 }
 
@@ -869,6 +887,7 @@ const ico = {
   ext: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`,
   zap: `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
   shield: `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  users: `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
 };
 
 /* ═══ 신뢰도 배지 (reliability 값만 추가 표시) ════════════════ */
@@ -878,6 +897,14 @@ function relBadge(rel) {
   const cls = r === 'A' ? 'rel-a' : r === 'B' ? 'rel-b' : r === 'C' ? 'rel-c' : 'rel-ref';
   const label = (r === 'A' || r === 'B' || r === 'C') ? ('신뢰도 ' + r) : r;
   return `<span class="rel-badge ${cls}" title="낙찰 데이터 신뢰도">${ico.shield} ${esc(label)}</span>`;
+}
+
+/* ═══ 경쟁도 배지 (competitionLevel 값만 추가 표시) ═══════════ */
+function compBadge(level) {
+  const v = String(level || '').trim();
+  if (!v) return '';
+  const cls = v === '낮음' ? 'comp-low' : v === '보통' ? 'comp-mid' : v === '높음' ? 'comp-high' : 'comp-ref';
+  return `<span class="comp-badge ${cls}" title="과거 유사 입찰 평균 경쟁 수준">${ico.users} 경쟁 ${esc(v)}</span>`;
 }
 
 /* ═══ 카드 HTML 생성 ═════════════════════════════════════════ */
@@ -898,6 +925,7 @@ function renderCard(b, delay) {
         </span>
         <span class="card-num">${esc(b.no)}</span>
         ${relBadge(b.reliability)}
+        ${compBadge(b.competitionLevel)}
         ${urgentTag}
         ${restrictTag}
       </div>
@@ -1087,6 +1115,14 @@ function showDetail(id) {
       <div class="modal-field">
         <div class="modal-field-label">추천사정률범위</div>
         <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${b.rateRange ? esc(b.rateRange) : '-'}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">평균참가수</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${(b.avgParticipants !== '' && b.avgParticipants != null) ? b.avgParticipants + '개사' : '-'}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">경쟁도</div>
+        <div class="modal-field-value">${b.competitionLevel ? compBadge(b.competitionLevel) : '-'}</div>
       </div>
     </div>
     <div class="modal-reason" style="background:${infoBg};color:${infoColor}">
