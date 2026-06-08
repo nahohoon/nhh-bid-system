@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>나라장터 입찰추천 | 윤성종합건설</title>
+<style>
+/* ── 구글 폰트 ─────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ── CSS 변수 (라이트 모드) ──────────────────── */
+:root {
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface2: #f0f4fa;
+  --border: #e2e8f0;
+  --text: #0f1929;
+  --text2: #4b5a72;
+  --text3: #8494ab;
+  --primary: #2563eb;
+  --primary-light: #eff6ff;
+  --primary-fg: #ffffff;
+
+  --a-bg: #f0fdf4;
+  --a-border: #86efac;
+  --a-badge: #16a34a;
+  --a-text: #15803d;
+  --a-bar: #22c55e;
+  --a-info: #dcfce7;
+  --a-info-text: #166534;
+
+  --b-bg: #fffbeb;
+  --b-border: #fcd34d;
+  --b-badge: #d97706;
+  --b-text: #b45309;
+  --b-bar: #f59e0b;
+  --b-info: #fef9c3;
+  --b-info-text: #854d0e;
+
+  --c-bg: #f8fafc;
+  --c-border: #cbd5e1;
+  --c-badge: #64748b;
+  --c-text: #475569;
+  --c-bar: #94a3b8;
+  --c-info: #f1f5f9;
+  --c-info-text: #475569;
+
+  --kpi-a: #dcfce7;
+  --kpi-a-icon: #16a34a;
+  --kpi-b: #fef9c3;
+  --kpi-b-icon: #ca8a04;
+  --kpi-c: #f1f5f9;
+  --kpi-c-icon: #64748b;
+  --kpi-blue: #dbeafe;
+  --kpi-blue-icon: #1d4ed8;
+  --kpi-red: #fee2e2;
+  --kpi-red-icon: #dc2626;
+
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.07);
+  --shadow: 0 4px 16px rgba(0,0,0,0.09);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.13);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-chip: 999px;
+}
+
+/* ── 다크 모드 ──────────────────────────────── */
+[data-theme="dark"] {
+  --bg: #0f1a2e;
+  --surface: #172035;
+  --surface2: #1e2a42;
+  --border: #2a3a58;
+  --text: #e8eef8;
+  --text2: #8aa4c8;
+  --text3: #4e6487;
+  --primary: #3b82f6;
+  --primary-light: #1e3a5f;
+  --primary-fg: #ffffff;
+
+  --a-bg: #052e16;
+  --a-border: #166534;
+  --a-badge: #16a34a;
+  --a-text: #4ade80;
+  --a-bar: #22c55e;
+  --a-info: #14532d;
+  --a-info-text: #86efac;
+
+  --b-bg: #1c1600;
+  --b-border: #854d0e;
+  --b-badge: #ca8a04;
+  --b-text: #fbbf24;
+  --b-bar: #f59e0b;
+  --b-info: #292000;
+  --b-info-text: #fde68a;
+
+  --c-bg: #0f172a;
+  --c-border: #334155;
+  --c-badge: #475569;
+  --c-text: #94a3b8;
+  --c-bar: #64748b;
+  --c-info: #1e293b;
+  --c-info-text: #94a3b8;
+
+  --kpi-a: #052e16;
+  --kpi-a-icon: #4ade80;
+  --kpi-b: #1c1600;
+  --kpi-b-icon: #fbbf24;
+  --kpi-c: #1e293b;
+  --kpi-c-icon: #94a3b8;
+  --kpi-blue: #1e3a5f;
+  --kpi-blue-icon: #60a5fa;
+  --kpi-red: #3b0a0a;
+  --kpi-red-icon: #f87171;
+
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.3);
+  --shadow: 0 4px 16px rgba(0,0,0,0.35);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+/* ── 리셋 & 기본 ─────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+  -webkit-font-smoothing: antialiased;
+}
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+input { font-family: inherit; }
+a { text-decoration: none; color: inherit; }
+
+/* ── 헤더 ────────────────────────────────────── */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(10px);
+}
+.header-inner {
+  max-width: 1280px; margin: 0 auto;
+  padding: 12px 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.logo-box {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.logo-box svg { color: white; }
+.logo-text h1 { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.logo-text p { font-size: 11px; color: var(--text3); line-height: 1.2; }
+.search-wrap {
+  flex: 1; max-width: 360px; margin: 0 auto;
+  position: relative;
+}
+.search-wrap .ico { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text3); }
+.search-wrap input {
+  width: 100%; height: 34px;
+  padding: 0 12px 0 32px;
+  font-size: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-wrap input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+.search-wrap input::placeholder { color: var(--text3); }
+.header-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.updated-text { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.icon-btn {
+  width: 34px; height: 34px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text2);
+  transition: background 0.2s, color 0.2s;
+  position: relative;
+}
+.icon-btn:hover { background: var(--primary-light); color: var(--primary); }
+.notif-dot {
+  position: absolute; top: 5px; right: 5px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #ef4444; border: 1.5px solid var(--surface);
+}
+
+/* ── 메인 레이아웃 ───────────────────────────── */
+.main { max-width: 1280px; margin: 0 auto; padding: 24px 20px; }
+.section-gap { margin-bottom: 24px; }
+
+/* ── 업체 배너 ───────────────────────────────── */
+.company-banner {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%);
+  border-radius: var(--radius); padding: 20px 24px;
+  color: white; position: relative; overflow: hidden;
+  box-shadow: 0 6px 24px rgba(37,99,235,0.35);
+}
+.company-banner::after {
+  content: ''; position: absolute; right: -40px; top: -40px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.banner-inner { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.banner-left h2 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+.banner-left p { font-size: 11px; opacity: 0.75; margin-bottom: 8px; }
+.banner-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.banner-tag {
+  font-size: 10px; font-weight: 600;
+  background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+  padding: 2px 8px; border-radius: var(--radius-chip);
+}
+.banner-stats { display: flex; gap: 20px; }
+.banner-stat { text-align: center; }
+.banner-stat .val { font-size: 20px; font-weight: 800; font-family: 'JetBrains Mono', monospace; line-height: 1; }
+.banner-stat .lbl { font-size: 10px; opacity: 0.7; margin-top: 2px; }
+.banner-divider { width: 1px; background: rgba(255,255,255,0.25); align-self: stretch; }
+
+/* ── KPI 카드 그리드 ─────────────────────────── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+.kpi-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: fadeUp 0.5s ease both;
+}
+.kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.kpi-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.kpi-body .lbl { font-size: 11px; font-weight: 500; color: var(--text2); margin-bottom: 2px; }
+.kpi-body .val { font-size: 24px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text); line-height: 1; }
+.kpi-body .sub { font-size: 10px; color: var(--text3); margin-top: 3px; }
+
+/* ── 필터 박스 ───────────────────────────────── */
+.filter-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.filter-title { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+.filter-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.filter-label { font-size: 11px; font-weight: 600; color: var(--text3); width: 30px; flex-shrink: 0; }
+.chip {
+  padding: 5px 12px; border-radius: var(--radius-chip);
+  font-size: 12px; font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--surface2); color: var(--text2);
+  transition: all 0.18s; cursor: pointer;
+  min-height: 30px;
+}
+.chip:hover { border-color: var(--primary); color: var(--primary); }
+.chip.active {
+  background: var(--primary); color: white; border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+}
+.filter-divider { width: 1px; height: 28px; background: var(--border); }
+.filter-reset {
+  margin-left: auto; font-size: 12px; font-weight: 600;
+  color: var(--primary); cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+  padding: 4px 8px; border-radius: var(--radius-sm);
+  transition: background 0.18s;
+}
+.filter-reset:hover { background: var(--primary-light); }
+.filter-result { font-size: 11px; color: var(--text3); margin-top: 10px; }
+.filter-result span { font-weight: 700; color: var(--primary); }
+
+/* ── 섹션 헤더 ───────────────────────────────── */
+.section-hdr {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; border-radius: var(--radius);
+  border: 1px solid; margin-bottom: 16px;
+  cursor: default; user-select: none;
+  transition: opacity 0.18s;
+}
+.section-hdr.grade-a { background: linear-gradient(to right, #f0fdf4, #dcfce7); border-color: var(--a-border); }
+.section-hdr.grade-b { background: linear-gradient(to right, #fffbeb, #fef9c3); border-color: var(--b-border); }
+.section-hdr.grade-c { background: linear-gradient(to right, #f8fafc, #f1f5f9); border-color: var(--c-border); cursor: pointer; }
+[data-theme="dark"] .section-hdr.grade-a { background: linear-gradient(to right, #052e16, #14532d); }
+[data-theme="dark"] .section-hdr.grade-b { background: linear-gradient(to right, #1c1600, #292000); }
+[data-theme="dark"] .section-hdr.grade-c { background: linear-gradient(to right, #0f172a, #1e293b); }
+.grade-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 800;
+  padding: 3px 10px; border-radius: var(--radius-chip); flex-shrink: 0;
+}
+.grade-a .grade-badge { background: var(--a-badge); color: white; }
+.grade-b .grade-badge { background: var(--b-badge); color: white; }
+.grade-c .grade-badge { background: var(--c-badge); color: white; }
+.section-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.section-count { font-size: 14px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+.grade-a .section-count { color: var(--a-text); }
+.grade-b .section-count { color: var(--b-text); }
+.grade-c .section-count { color: var(--c-text); }
+.toggle-hint { margin-left: auto; font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 4px; }
+
+/* ── 카드 그리드 ─────────────────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.empty-msg { text-align: center; color: var(--text3); font-size: 13px; padding: 32px 0; }
+
+/* ── 입찰 카드 ───────────────────────────────── */
+.bid-card {
+  border: 1px solid; border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.22s, box-shadow 0.22s;
+  animation: fadeUp 0.45s ease both;
+  display: flex; flex-direction: column;
+}
+.bid-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.bid-card.grade-a { background: var(--a-bg); border-color: var(--a-border); }
+.bid-card.grade-b { background: var(--b-bg); border-color: var(--b-border); }
+.bid-card.grade-c { background: var(--c-bg); border-color: var(--c-border); }
+
+.card-stripe { height: 4px; }
+.grade-a .card-stripe { background: var(--a-bar); }
+.grade-b .card-stripe { background: var(--b-bar); }
+.grade-c .card-stripe { background: var(--c-bar); }
+
+.card-body { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+
+.card-head { display: flex; align-items: flex-start; gap: 6px; flex-wrap: wrap; }
+.card-grade-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 800;
+  padding: 2px 7px; border-radius: var(--radius-chip);
+  flex-shrink: 0;
+}
+.grade-a .card-grade-badge { background: var(--a-badge); color: white; }
+.grade-b .card-grade-badge { background: var(--b-badge); color: white; }
+.grade-c .card-grade-badge { background: var(--c-badge); color: white; }
+.card-num { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--text3); flex-shrink: 0; margin-top: 2px; }
+.urgent-tag {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; font-weight: 800;
+  background: #ef4444; color: white;
+  padding: 2px 7px; border-radius: var(--radius-chip);
+  animation: pulse 1.5s infinite;
+}
+.restrict-tag {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; font-weight: 600;
+  background: #fee2e2; color: #b91c1c;
+  border: 1px solid #fca5a5;
+  padding: 2px 7px; border-radius: var(--radius-chip);
+  flex-shrink: 0;
+}
+[data-theme="dark"] .restrict-tag { background: #3b0a0a; color: #f87171; border-color: #7f1d1d; }
+
+.card-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.45; }
+
+.card-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 10px; }
+.meta-item { font-size: 11px; color: var(--text2); display: flex; align-items: center; gap: 5px; }
+.meta-item svg { flex-shrink: 0; color: var(--text3); }
+.meta-item.money { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+.grade-a .meta-item.money { color: var(--a-text); }
+.grade-b .meta-item.money { color: var(--b-text); }
+.grade-c .meta-item.money { color: var(--c-text); }
+.meta-item.urgent-date { color: #ef4444; font-weight: 700; }
+
+.score-row { }
+.score-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.score-label .lbl { font-size: 10px; color: var(--text3); display: flex; align-items: center; gap: 3px; }
+.score-label .val { font-size: 13px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+.grade-a .score-label .val { color: var(--a-text); }
+.grade-b .score-label .val { color: var(--b-text); }
+.grade-c .score-label .val { color: var(--c-text); }
+.score-bar-bg { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
+.grade-a .score-bar-fill { background: var(--a-bar); }
+.grade-b .score-bar-fill { background: var(--b-bar); }
+.grade-c .score-bar-fill { background: var(--c-bar); }
+
+.reason-box {
+  font-size: 11px; line-height: 1.55;
+  border-radius: var(--radius-sm); padding: 8px 10px;
+  display: flex; align-items: flex-start; gap: 6px;
+}
+.grade-a .reason-box { background: var(--a-info); color: var(--a-info-text); }
+.grade-b .reason-box { background: var(--b-info); color: var(--b-info-text); }
+.grade-c .reason-box { background: var(--c-info); color: var(--c-info-text); }
+.reason-box svg { flex-shrink: 0; margin-top: 1px; }
+
+.card-btns { display: flex; gap: 8px; margin-top: auto; }
+.btn {
+  flex: 1; height: 32px; border-radius: var(--radius-sm);
+  font-size: 11px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  transition: all 0.18s; border: 1px solid transparent;
+}
+.btn-outline {
+  background: var(--surface); border-color: var(--border); color: var(--text2);
+}
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+.grade-a .btn-fill { background: var(--a-badge); color: white; }
+.grade-a .btn-fill:hover { background: #15803d; }
+.grade-b .btn-fill { background: var(--b-badge); color: white; }
+.grade-b .btn-fill:hover { background: #92400e; }
+.grade-c .btn-fill { background: var(--c-badge); color: white; }
+.grade-c .btn-fill:hover { background: #334155; }
+
+/* ── 제외 공고 접기 ───────────────────────────── */
+.c-section-content { overflow: hidden; transition: max-height 0.4s ease; }
+.c-collapsed-hint { text-align: center; font-size: 11px; color: var(--text3); padding: 8px 0; }
+
+/* ── 푸터 ────────────────────────────────────── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 24px 0 40px;
+  text-align: center;
+}
+.footer .name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.footer .sub { font-size: 11px; color: var(--text3); }
+.footer .note { font-size: 10px; color: var(--text3); margin-top: 4px; opacity: 0.7; }
+
+/* ── 애니메이션 ──────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+/* ── 반응형 ──────────────────────────────────── */
+@media (max-width: 1100px) {
+  .card-grid { grid-template-columns: repeat(3, 1fr); }
+  .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .header-inner { gap: 8px; }
+  .search-wrap { display: none; }
+  .updated-text { display: none; }
+  .banner-stats { display: none; }
+  .card-grid { grid-template-columns: repeat(2, 1fr); }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .filter-row { gap: 10px; }
+  .filter-divider { display: none; }
+  .main { padding: 16px 12px; }
+  .section-gap { margin-bottom: 20px; }
+}
+@media (max-width: 480px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .banner-left h2 { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── 헤더 ─────────────────────────────────────────── -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo-box">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+    </div>
+    <div class="logo-text">
+      <h1>나라장터 입찰추천시스템</h1>
+      <p>윤성종합건설(주) 전용 대시보드</p>
+    </div>
+    <div class="search-wrap">
+      <span class="ico">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </span>
+      <input type="text" id="searchInput" placeholder="공고명, 발주기관 검색..." />
+    </div>
+    <div class="header-actions">
+      <div class="updated-text">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        2026-06-08 09:30 갱신
+      </div>
+      <button class="icon-btn" id="themeBtn" title="다크/라이트 모드 전환">
+        <svg id="iconSun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg id="iconMoon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+      </button>
+      <button class="icon-btn" title="알림">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="notif-dot"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ── 메인 ─────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- 업체 배너 -->
+  <div class="company-banner section-gap">
+    <div class="banner-inner">
+      <div class="banner-left">
+        <p>분석 대상 업체</p>
+        <h2>윤성종합건설(주)</h2>
+        <div class="banner-tags">
+          <span class="banner-tag">✓ 토목공사업</span>
+          <span class="banner-tag">✓ 지반조성·포장공사업</span>
+          <span class="banner-tag">✓ 상·하수도설비공사업</span>
+        </div>
+      </div>
+      <div class="banner-stats">
+        <div class="banner-stat">
+          <div class="val">6.5억</div>
+          <div class="lbl">시공능력평가액</div>
+        </div>
+        <div class="banner-divider"></div>
+        <div class="banner-stat">
+          <div class="val">대구 · 경북</div>
+          <div class="lbl">선호 지역</div>
+        </div>
+        <div class="banner-divider"></div>
+        <div class="banner-stat">
+          <div class="val">23명</div>
+          <div class="lbl">직원 수</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI 카드 -->
+  <div class="kpi-grid section-gap" id="kpiGrid"></div>
+
+  <!-- 모바일 검색 -->
+  <div class="filter-box section-gap" id="filterBox" style="display:none">
+    <div style="position:relative; margin-bottom:10px;">
+      <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </span>
+      <input type="text" id="mobileSearch" placeholder="공고명, 발주기관 검색..." style="width:100%;height:36px;padding:0 12px 0 32px;font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);outline:none;font-family:inherit" />
+    </div>
+  </div>
+
+  <!-- 필터 -->
+  <div class="filter-box section-gap">
+    <div class="filter-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      필터
+      <button class="filter-reset" id="resetBtn" style="display:none">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+        초기화
+      </button>
+    </div>
+    <div class="filter-row">
+      <div class="filter-group">
+        <span class="filter-label">지역</span>
+        <button class="chip active" data-filter="zone" data-val="전체">전체</button>
+        <button class="chip" data-filter="zone" data-val="대구">대구</button>
+        <button class="chip" data-filter="zone" data-val="경북">경북</button>
+        <button class="chip" data-filter="zone" data-val="기타">기타</button>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-group">
+        <span class="filter-label">공종</span>
+        <button class="chip active" data-filter="type" data-val="전체">전체</button>
+        <button class="chip" data-filter="type" data-val="토목">토목</button>
+        <button class="chip" data-filter="type" data-val="포장">포장</button>
+        <button class="chip" data-filter="type" data-val="상하수도">상하수도</button>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-group">
+        <span class="filter-label">등급</span>
+        <button class="chip active" data-filter="grade" data-val="전체">전체</button>
+        <button class="chip" data-filter="grade" data-val="A">A등급</button>
+        <button class="chip" data-filter="grade" data-val="B">B등급</button>
+        <button class="chip" data-filter="grade" data-val="C">C등급</button>
+      </div>
+    </div>
+    <div class="filter-result" id="filterResult" style="display:none"></div>
+  </div>
+
+  <!-- 강추 A -->
+  <div class="section-gap">
+    <div class="section-hdr grade-a" id="hdrA">
+      <span class="grade-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        강 추
+      </span>
+      <span class="section-title">강추 공고</span>
+      <span class="section-count" id="cntA">-</span>
+    </div>
+    <div class="card-grid" id="gridA"></div>
+  </div>
+
+  <!-- 검토 B -->
+  <div class="section-gap">
+    <div class="section-hdr grade-b" id="hdrB">
+      <span class="grade-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+        검 토
+      </span>
+      <span class="section-title">검토 공고</span>
+      <span class="section-count" id="cntB">-</span>
+    </div>
+    <div class="card-grid" id="gridB"></div>
+  </div>
+
+  <!-- 제외 C -->
+  <div class="section-gap">
+    <div class="section-hdr grade-c" id="hdrC" onclick="toggleC()">
+      <span class="grade-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+        제 외
+      </span>
+      <span class="section-title">제외 공고</span>
+      <span class="section-count" id="cntC">-</span>
+      <span class="toggle-hint" id="toggleHint">
+        <svg id="toggleIco" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        펼치기
+      </span>
+    </div>
+    <div id="cSection" style="max-height:0;overflow:hidden;transition:max-height 0.4s ease;">
+      <div class="card-grid" id="gridC"></div>
+    </div>
+    <div class="c-collapsed-hint" id="cHint"></div>
+  </div>
+
+  <!-- 푸터 -->
+  <div class="footer">
+    <div class="name">나라장터 입찰추천시스템 v1.0</div>
+    <div class="sub">윤성종합건설(주) 전용 · 마지막 갱신: 2026-06-08 09:30</div>
+    <div class="note">본 시스템의 추천 결과는 참고용이며, 최종 입찰 결정은 담당자가 직접 판단하시기 바랍니다.</div>
+  </div>
+
+</main>
+
+<script>
+/* ═══ 더미 데이터 ═══════════════════════════════════════════ */
+const BIDS = [
+  /* ── A 강추 ── */
+  { id:1, no:'SBG202406-0041', name:'상주동부초등학교 진입로 포장 및 기타공사', org:'상주교육지원청', zone:'경북', amount:187000000, deadline:'2026-06-12', type:'포장', restrict:false, score:95, grade:'A', reason:'선호지역(경북) 포장공사, 시공능력 적정, 경쟁업체 少', urgent:true },
+  { id:2, no:'SBG202406-0052', name:'상주~도청신도시간 도로건설구간 상수관 이설공사', org:'경북도청', zone:'경북', amount:243000000, deadline:'2026-06-22', type:'상하수도', restrict:false, score:92, grade:'A', reason:'선호지역(경북), 상하수도 면허 보유, 공공발주 고신뢰 기관', urgent:false },
+  { id:3, no:'SBG202406-0067', name:'대구 달성군 농촌 도로정비 및 배수로 개설공사', org:'달성군청', zone:'대구', amount:156000000, deadline:'2026-06-25', type:'토목', restrict:false, score:91, grade:'A', reason:'선호지역(대구), 토목공사 면허 적합, 금액 범위 최적', urgent:false },
+  { id:4, no:'SBG202406-0078', name:'대구 수성구 하수관로 정비공사', org:'대구광역시 수성구청', zone:'대구', amount:198000000, deadline:'2026-06-30', type:'상하수도', restrict:false, score:88, grade:'A', reason:'선호지역(대구), 상하수도 면허 보유, 관납실적 축적 가능', urgent:false },
+  /* ── B 검토 ── */
+  { id:5, no:'SBG202406-0089', name:'안동시 도시계획도로 개설공사', org:'안동시청', zone:'경북', amount:378000000, deadline:'2026-07-05', type:'토목', restrict:false, score:72, grade:'B', reason:'경북 소재이나 금액이 시공능력 상한에 근접, 경쟁 심화 예상', urgent:false },
+  { id:6, no:'SBG202406-0101', name:'구미시 공단지역 우수 배수관로 개량공사', org:'구미시청', zone:'경북', amount:295000000, deadline:'2026-07-10', type:'상하수도', restrict:false, score:68, grade:'B', reason:'경북 소재, 면허 적합. 구미시 텃세 있는 지역으로 분류', urgent:false },
+  { id:7, no:'SBG202406-0115', name:'경주시 국도대체우회도로 포장공사', org:'경주국토관리사무소', zone:'경북', amount:512000000, deadline:'2026-07-15', type:'포장', restrict:true, score:58, grade:'B', reason:'업종제한 있음, 금액 상한 초과 우려. 포장면허 확인 필요', urgent:false },
+  { id:8, no:'SBG202406-0122', name:'포항시 영일만항 배후도로 개설공사', org:'포항시청', zone:'경북', amount:421000000, deadline:'2026-07-18', type:'토목', restrict:false, score:61, grade:'B', reason:'경북이나 거리 원거리(포항), 금액 다소 높음', urgent:false },
+  /* ── C 제외 ── */
+  { id:9, no:'SBG202406-0133', name:'인천광역시 서구 아파트 단지 철근콘크리트 공사', org:'인천서구청', zone:'인천', amount:890000000, deadline:'2026-07-20', type:'철근콘크리트', restrict:true, score:18, grade:'C', reason:'비선호지역(인천), 보유면허 미해당(철근콘크리트), 금액초과', urgent:false },
+  { id:10, no:'SBG202406-0144', name:'서울시 강남구 도로 재포장 대규모 공사', org:'서울시 강남구청', zone:'서울', amount:1250000000, deadline:'2026-07-22', type:'포장', restrict:true, score:12, grade:'C', reason:'비선호지역(서울), 시공능력평가액 대폭 초과, 참가자격 미달', urgent:false },
+  { id:11, no:'SBG202406-0156', name:'부산시 해운대 해안도로 교량 신설공사', org:'부산시청', zone:'부산', amount:2100000000, deadline:'2026-07-25', type:'토목', restrict:true, score:8, grade:'C', reason:'비선호지역(부산), 금액 초과(21억), 면허 제한 적용', urgent:false },
+];
+
+/* ═══ 상태 ══════════════════════════════════════════════════ */
+let state = { zone:'전체', type:'전체', grade:'전체', search:'' };
+let cOpen = false;
+
+/* ═══ 유틸 ══════════════════════════════════════════════════ */
+function fmtMoney(n) {
+  if (n >= 100000000) return (n/100000000).toFixed(1) + '억';
+  if (n >= 10000) return Math.round(n/10000).toLocaleString() + '만';
+  return n.toLocaleString();
+}
+function daysLeft(d) { return Math.ceil((new Date(d) - Date.now()) / 86400000); }
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+const ZONE_EMO = {대구:'🏙️',경북:'🌾',인천:'⚓',서울:'🗼',부산:'🌊'};
+const TYPE_EMO = {토목:'⛏️',포장:'🛣️',상하수도:'💧',철근콘크리트:'🏗️'};
+
+/* ═══ 필터링 ═════════════════════════════════════════════════ */
+function filtered() {
+  return BIDS.filter(b => {
+    if (state.zone !== '전체') {
+      if (state.zone === '기타') { if(['대구','경북'].includes(b.zone)) return false; }
+      else { if(b.zone !== state.zone) return false; }
+    }
+    if (state.type !== '전체' && b.type !== state.type) return false;
+    if (state.grade !== '전체' && b.grade !== state.grade) return false;
+    if (state.search.trim()) {
+      const q = state.search.toLowerCase();
+      if (!b.name.toLowerCase().includes(q) && !b.org.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+/* ═══ SVG 아이콘 모음 (인라인) ══════════════════════════════ */
+const ico = {
+  building: `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
+  map: `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`,
+  money: `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>`,
+  cal: `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>`,
+  file: `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+  trend: `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>`,
+  info: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>`,
+  search: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>`,
+  ext: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`,
+  zap: `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  shield: `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+};
+
+/* ═══ 카드 HTML 생성 ═════════════════════════════════════════ */
+function renderCard(b, delay) {
+  const days = daysLeft(b.deadline);
+  const isUrgent = days <= 5;
+  const deadlineStr = b.deadline.slice(5) + (isUrgent ? ` (D-${days})` : '');
+  const urgentTag = isUrgent ? `<span class="urgent-tag">${ico.zap} D-${days}</span>` : '';
+  const restrictTag = b.restrict ? `<span class="restrict-tag">${ico.shield} 업종제한</span>` : '';
+
+  return `
+  <div class="bid-card grade-${b.grade.toLowerCase()}" style="animation-delay:${delay}ms">
+    <div class="card-stripe"></div>
+    <div class="card-body">
+      <div class="card-head">
+        <span class="card-grade-badge">
+          ${b.grade === 'A' ? '✓' : b.grade === 'B' ? '⚠' : '✕'} ${b.grade === 'A' ? '강 추' : b.grade === 'B' ? '검 토' : '제 외'}
+        </span>
+        <span class="card-num">${esc(b.no)}</span>
+        ${urgentTag}
+        ${restrictTag}
+      </div>
+      <div class="card-title">${esc(b.name)}</div>
+      <div class="card-meta">
+        <div class="meta-item">${ico.building} <span>${esc(b.org)}</span></div>
+        <div class="meta-item">${ico.map} <span>${ZONE_EMO[b.zone]||'📍'} ${esc(b.zone)}</span></div>
+        <div class="meta-item money">${ico.money} <span>${fmtMoney(b.amount)}</span></div>
+        <div class="meta-item ${isUrgent ? 'urgent-date' : ''}">${ico.cal} <span style="font-family:'JetBrains Mono',monospace;font-weight:${isUrgent?700:400}">${deadlineStr}</span></div>
+        <div class="meta-item" style="grid-column:span 2">${ico.file} <span>${TYPE_EMO[b.type]||'🔧'} ${esc(b.type)}</span></div>
+      </div>
+      <div class="score-row">
+        <div class="score-label">
+          <span class="lbl">${ico.trend} 추천점수</span>
+          <span class="val">${b.score}점</span>
+        </div>
+        <div class="score-bar-bg">
+          <div class="score-bar-fill" style="width:0%" data-w="${b.score}%"></div>
+        </div>
+      </div>
+      <div class="reason-box">${ico.info} <span>${esc(b.reason)}</span></div>
+      <div class="card-btns">
+        <button class="btn btn-outline" onclick="showDetail(${b.id})">${ico.search} 상세보기</button>
+        <button class="btn btn-fill" onclick="window.open('https://www.g2b.go.kr/','_blank')">${ico.ext} 나라장터</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══ 렌더링 ═════════════════════════════════════════════════ */
+function render() {
+  const list = filtered();
+  const byGrade = g => list.filter(b => b.grade === g);
+
+  ['A','B','C'].forEach(g => {
+    const items = byGrade(g);
+    const grid = document.getElementById('grid' + g);
+    const cnt  = document.getElementById('cnt'  + g);
+    cnt.textContent = items.length + '건';
+    if (items.length === 0) {
+      grid.innerHTML = `<div class="empty-msg" style="grid-column:1/-1">조건에 맞는 공고가 없습니다.</div>`;
+    } else {
+      grid.innerHTML = items.map((b, i) => renderCard(b, i * 60)).join('');
+    }
+  });
+
+  // 점수 바 애니메이션
+  setTimeout(() => {
+    document.querySelectorAll('.score-bar-fill').forEach(el => {
+      el.style.width = el.dataset.w;
+    });
+  }, 80);
+
+  // 필터 결과 표시
+  const hasFilter = state.zone !== '전체' || state.type !== '전체' || state.grade !== '전체' || state.search.trim();
+  const resultEl = document.getElementById('filterResult');
+  const resetBtn = document.getElementById('resetBtn');
+  resultEl.style.display = hasFilter ? '' : 'none';
+  resetBtn.style.display  = hasFilter ? '' : 'none';
+  resultEl.innerHTML = `필터 결과: <span>${list.length}건</span> / 전체 ${BIDS.length}건`;
+
+  // 제외 공고 힌트
+  const cItems = byGrade('C');
+  document.getElementById('cHint').textContent =
+    cOpen ? '' : (cItems.length > 0 ? `클릭하여 ${cItems.length}건의 제외 공고를 확인하세요` : '');
+}
+
+/* ═══ KPI ══════════════════════════════════════════════════ */
+function renderKPI() {
+  const countA = BIDS.filter(b=>b.grade==='A').length;
+  const countB = BIDS.filter(b=>b.grade==='B').length;
+  const countC = BIDS.filter(b=>b.grade==='C').length;
+  const total  = BIDS.length;
+  const urgent = BIDS.filter(b=>daysLeft(b.deadline)<=7).length;
+
+  const kpis = [
+    { lbl:'강추 공고',   val:countA+'건', bg:'var(--kpi-a)', ic:'var(--kpi-a-icon)', sub:'즉시 입찰 검토',
+      svg:`<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>` },
+    { lbl:'검토 공고',   val:countB+'건', bg:'var(--kpi-b)', ic:'var(--kpi-b-icon)', sub:'조건 확인 후 판단',
+      svg:`<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>` },
+    { lbl:'제외 공고',   val:countC+'건', bg:'var(--kpi-c)', ic:'var(--kpi-c-icon)', sub:'자격 미달·지역 외',
+      svg:`<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>` },
+    { lbl:'총 분석 공고', val:total+'건',  bg:'var(--kpi-blue)', ic:'var(--kpi-blue-icon)', sub:'오늘 기준 전체',
+      svg:`<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>` },
+    { lbl:'마감 임박',   val:urgent+'건', bg:'var(--kpi-red)', ic:'var(--kpi-red-icon)', sub:'7일 이내 마감',
+      svg:`<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>` },
+  ];
+
+  document.getElementById('kpiGrid').innerHTML = kpis.map((k,i) => `
+    <div class="kpi-card" style="animation-delay:${i*70}ms">
+      <div class="kpi-icon" style="background:${k.bg};color:${k.ic}">${k.svg}</div>
+      <div class="kpi-body">
+        <div class="lbl">${k.lbl}</div>
+        <div class="val">${k.val}</div>
+        <div class="sub">${k.sub}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ═══ C 섹션 접기/펼치기 ════════════════════════════════════ */
+function toggleC() {
+  cOpen = !cOpen;
+  const el = document.getElementById('cSection');
+  const hint = document.getElementById('toggleHint');
+  const ico2 = document.getElementById('toggleIco');
+  if (cOpen) {
+    el.style.maxHeight = '2000px';
+    hint.innerHTML = `<svg id="toggleIco" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg> 접기`;
+  } else {
+    el.style.maxHeight = '0';
+    hint.innerHTML = `<svg id="toggleIco" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> 펼치기`;
+  }
+  const cItems = filtered().filter(b=>b.grade==='C');
+  document.getElementById('cHint').textContent =
+    cOpen ? '' : (cItems.length > 0 ? `클릭하여 ${cItems.length}건의 제외 공고를 확인하세요` : '');
+}
+
+/* ═══ 상세 팝업 ═════════════════════════════════════════════ */
+function showDetail(id) {
+  const b = BIDS.find(x => x.id === id);
+  if (!b) return;
+  const days = daysLeft(b.deadline);
+  alert(
+    `📋 공고 상세 정보\n` +
+    `━━━━━━━━━━━━━━━━━━\n` +
+    `📌 공고번호: ${b.no}\n` +
+    `📝 공고명: ${b.name}\n` +
+    `🏢 발주기관: ${b.org}\n` +
+    `📍 지역: ${b.zone}\n` +
+    `💰 기초금액: ${fmtMoney(b.amount)}\n` +
+    `📅 마감일: ${b.deadline} (D-${days})\n` +
+    `🔧 공종: ${b.type}\n` +
+    `🔒 업종제한: ${b.restrict ? '있음' : '없음'}\n` +
+    `⭐ 추천점수: ${b.score}점 (${b.grade}등급)\n` +
+    `━━━━━━━━━━━━━━━━━━\n` +
+    `💡 판단사유: ${b.reason}`
+  );
+}
+
+/* ═══ 다크모드 ══════════════════════════════════════════════ */
+function initTheme() {
+  const saved = localStorage.getItem('nara-theme');
+  const dark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme:dark)').matches);
+  setTheme(dark);
+}
+function setTheme(dark) {
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  document.getElementById('iconSun').style.display  = dark ? ''  : 'none';
+  document.getElementById('iconMoon').style.display = dark ? 'none' : '';
+  localStorage.setItem('nara-theme', dark ? 'dark' : 'light');
+}
+document.getElementById('themeBtn').addEventListener('click', () => {
+  setTheme(document.documentElement.getAttribute('data-theme') !== 'dark');
+});
+
+/* ═══ 필터 이벤트 ═══════════════════════════════════════════ */
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const filter = chip.dataset.filter;
+    const val    = chip.dataset.val;
+    // 같은 그룹 chip active 처리
+    document.querySelectorAll(`.chip[data-filter="${filter}"]`).forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    state[filter] = val;
+    render();
+  });
+});
+document.getElementById('searchInput').addEventListener('input', e => {
+  state.search = e.target.value;
+  render();
+});
+document.getElementById('resetBtn').addEventListener('click', () => {
+  state = { zone:'전체', type:'전체', grade:'전체', search:'' };
+  document.getElementById('searchInput').value = '';
+  document.querySelectorAll('.chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.val === '전체');
+  });
+  render();
+});
+
+/* ═══ 초기 실행 ═════════════════════════════════════════════ */
+initTheme();
+renderKPI();
+render();
+</script>
+</body>
+</html>
