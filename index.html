@@ -230,11 +230,11 @@ a { text-decoration: none; color: inherit; }
 .banner-inner { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
 .banner-left h2 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
 .banner-left p { font-size: 11px; opacity: 0.75; margin-bottom: 8px; }
-.banner-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.banner-tags { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .banner-tag {
-  font-size: 10px; font-weight: 600;
+  font-size: 18px; font-weight: 800;
   background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
-  padding: 2px 8px; border-radius: var(--radius-chip);
+  padding: 8px 16px; border-radius: var(--radius-chip);
 }
 .banner-stats { display: flex; gap: 20px; }
 .banner-stat { text-align: center; }
@@ -653,7 +653,6 @@ a { text-decoration: none; color: inherit; }
     </div>
     <div class="logo-text">
       <h1 id="appTitle">나라장터 입찰추천시스템</h1>
-      <p><span id="headerCompany">윤성건설(주)</span> 전용 대시보드</p>
     </div>
     <div class="search-wrap">
       <span class="ico">
@@ -685,8 +684,6 @@ a { text-decoration: none; color: inherit; }
   <div class="company-banner section-gap">
     <div class="banner-inner">
       <div class="banner-left">
-        <p>분석 대상 업체</p>
-        <h2 id="companyName">윤성건설(주)</h2>
         <div class="banner-tags">
           <span class="banner-tag">✓ 토목공사업</span>
           <span class="banner-tag">✓ 지반조성·포장공사업</span>
