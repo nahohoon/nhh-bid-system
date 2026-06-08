@@ -412,6 +412,18 @@ a { text-decoration: none; color: inherit; }
 [data-theme="dark"] .comp-badge.comp-high { background: #3b0a0a; color: #f87171; border-color: #7f1d1d; }
 [data-theme="dark"] .comp-badge.comp-ref  { background: #172035; color: #4e6487; border-color: #2a3a58; }
 
+/* ── 발주처 패턴 분석 ─────────────────────────── */
+.owner-row {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+  font-size: 11px; color: var(--text2);
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 6px 9px;
+}
+.owner-row svg { flex-shrink: 0; color: var(--text3); }
+.owner-row .owner-lbl { font-weight: 700; color: var(--text3); }
+.owner-row b { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text); }
+.owner-row .owner-sep { color: var(--text3); }
+
 .card-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.45; }
 
 .card-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 10px; }
@@ -784,10 +796,10 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbyHQNrpPcLyaRNxUS74Cft1
 /* ═══ 샘플 데이터 (GAS 연동 전 사용) ══════════════════════ */
 const SAMPLE_BIDS = [
   /* ── A 강추 ── */
-  { id:1, reliability:'A', rate:87.421, rateRange:'87.35 ~ 87.48', avgParticipants:42, competitionLevel:'낮음', no:'SBG202406-0041', name:'상주동부초등학교 진입로 포장 및 기타공사', org:'상주교육지원청', zone:'경북', amount:187000000, deadline:'2026-06-12', type:'포장', restrict:false, score:95, grade:'A', reason:'선호지역(경북) 포장공사, 시공능력 적정, 경쟁업체 少', detailUrl:'https://www.g2b.go.kr/' },
+  { id:1, reliability:'A', rate:87.421, rateRange:'87.35 ~ 87.48', avgParticipants:42, competitionLevel:'낮음', ownerRate:87.53, ownerCount:126, ownerReliability:'A', no:'SBG202406-0041', name:'상주동부초등학교 진입로 포장 및 기타공사', org:'상주교육지원청', zone:'경북', amount:187000000, deadline:'2026-06-12', type:'포장', restrict:false, score:95, grade:'A', reason:'선호지역(경북) 포장공사, 시공능력 적정, 경쟁업체 少', detailUrl:'https://www.g2b.go.kr/' },
   { id:2, no:'SBG202406-0052', name:'상주~도청신도시간 도로건설구간 상수관 이설공사', org:'경북도청', zone:'경북', amount:243000000, deadline:'2026-06-22', type:'상하수도', restrict:false, score:92, grade:'A', reason:'선호지역(경북), 상하수도 면허 보유, 공공발주 고신뢰 기관', detailUrl:'https://www.g2b.go.kr/' },
-  { id:3, reliability:'B', rate:86.912, rateRange:'86.80 ~ 87.10', avgParticipants:86, competitionLevel:'보통', no:'SBG202406-0067', name:'대구 달성군 농촌 도로정비 및 배수로 개설공사', org:'달성군청', zone:'대구', amount:156000000, deadline:'2026-06-25', type:'토목', restrict:false, score:91, grade:'A', reason:'선호지역(대구), 토목공사 면허 적합, 금액 범위 최적', detailUrl:'https://www.g2b.go.kr/' },
-  { id:4, reliability:'C', rate:88.105, rateRange:'87.90 ~ 88.30', avgParticipants:130, competitionLevel:'높음', no:'SBG202406-0078', name:'대구 수성구 하수관로 정비공사', org:'대구광역시 수성구청', zone:'대구', amount:198000000, deadline:'2026-06-30', type:'상하수도', restrict:false, score:88, grade:'A', reason:'선호지역(대구), 상하수도 면허 보유, 관납실적 축적 가능', detailUrl:'https://www.g2b.go.kr/' },
+  { id:3, reliability:'B', rate:86.912, rateRange:'86.80 ~ 87.10', avgParticipants:86, competitionLevel:'보통', ownerRate:86.74, ownerCount:63, ownerReliability:'B', no:'SBG202406-0067', name:'대구 달성군 농촌 도로정비 및 배수로 개설공사', org:'달성군청', zone:'대구', amount:156000000, deadline:'2026-06-25', type:'토목', restrict:false, score:91, grade:'A', reason:'선호지역(대구), 토목공사 면허 적합, 금액 범위 최적', detailUrl:'https://www.g2b.go.kr/' },
+  { id:4, reliability:'C', rate:88.105, rateRange:'87.90 ~ 88.30', avgParticipants:130, competitionLevel:'높음', ownerRate:88.21, ownerCount:34, ownerReliability:'C', no:'SBG202406-0078', name:'대구 수성구 하수관로 정비공사', org:'대구광역시 수성구청', zone:'대구', amount:198000000, deadline:'2026-06-30', type:'상하수도', restrict:false, score:88, grade:'A', reason:'선호지역(대구), 상하수도 면허 보유, 관납실적 축적 가능', detailUrl:'https://www.g2b.go.kr/' },
   /* ── B 검토 ── */
   { id:5, no:'SBG202406-0089', name:'안동시 도시계획도로 개설공사', org:'안동시청', zone:'경북', amount:378000000, deadline:'2026-07-05', type:'토목', restrict:false, score:72, grade:'B', reason:'경북 소재이나 금액이 시공능력 상한에 근접, 경쟁 심화 예상', detailUrl:'https://www.g2b.go.kr/' },
   { id:6, no:'SBG202406-0101', name:'구미시 공단지역 우수 배수관로 개량공사', org:'구미시청', zone:'경북', amount:295000000, deadline:'2026-07-10', type:'상하수도', restrict:false, score:68, grade:'B', reason:'경북 소재, 면허 적합. 구미시 텃세 있는 지역으로 분류', detailUrl:'https://www.g2b.go.kr/' },
@@ -823,6 +835,9 @@ function normalizeBid(item, i) {
     rateRange: item.rateRange != null ? String(item.rateRange).trim() : '',
     avgParticipants: item.avgParticipants !== '' && item.avgParticipants != null ? Number(item.avgParticipants) : '',
     competitionLevel: item.competitionLevel != null ? String(item.competitionLevel).trim() : '',
+    ownerRate: item.ownerRate !== '' && item.ownerRate != null ? Number(item.ownerRate) : '',
+    ownerCount: item.ownerCount !== '' && item.ownerCount != null ? Number(item.ownerCount) : '',
+    ownerReliability: item.ownerReliability != null ? String(item.ownerReliability).trim() : '',
   };
 }
 
@@ -947,6 +962,7 @@ function renderCard(b, delay) {
         </div>
       </div>
       ${b.rateRange ? `<div class="rate-range-row">${ico.trend} 추천사정률 <b>${esc(b.rateRange)}</b></div>` : ''}
+      ${b.ownerRate ? `<div class="owner-row">${ico.building} <span class="owner-lbl">발주처분석</span> <b>${b.ownerRate}%</b> <span class="owner-sep">·</span> <b>${b.ownerCount}건</b> ${relBadge(b.ownerReliability)}</div>` : ''}
       <div class="reason-box">${ico.info} <span>${esc(b.reason)}</span></div>
       <div class="card-btns">
         <button class="btn btn-outline" onclick="showDetail(${b.id})">${ico.search} 상세보기</button>
@@ -1123,6 +1139,18 @@ function showDetail(id) {
       <div class="modal-field">
         <div class="modal-field-label">경쟁도</div>
         <div class="modal-field-value">${b.competitionLevel ? compBadge(b.competitionLevel) : '-'}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">발주처평균낙찰률</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${b.ownerRate ? b.ownerRate + '%' : '-'}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">발주처분석건수</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${(b.ownerCount !== '' && b.ownerCount != null) ? b.ownerCount + '건' : '-'}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">발주처신뢰도</div>
+        <div class="modal-field-value">${b.ownerReliability ? relBadge(b.ownerReliability) : '-'}</div>
       </div>
     </div>
     <div class="modal-reason" style="background:${infoBg};color:${infoColor}">
