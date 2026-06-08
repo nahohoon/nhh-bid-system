@@ -739,7 +739,7 @@ a { text-decoration: none; color: inherit; }
 
 <script>
 /* ═══ 설정 ══════════════════════════════════════════════════ */
-const GAS_URL = ''; // Google Apps Script 배포 URL — 연동 시 여기에 입력
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyHQNrpPcLyaRNxUS74Cft1AehaNnBPhQwyAymcgiYGQNGiPkNw7DVQPEUSYsjOhhI7/exec';
 
 /* ═══ 샘플 데이터 (GAS 연동 전 사용) ══════════════════════ */
 const SAMPLE_BIDS = [
@@ -759,17 +759,38 @@ const SAMPLE_BIDS = [
   { id:11, no:'SBG202406-0156', name:'부산시 해운대 해안도로 교량 신설공사', org:'부산시청', zone:'부산', amount:2100000000, deadline:'2026-07-25', type:'토목', restrict:true, score:8, grade:'C', reason:'비선호지역(부산), 금액 초과(21억), 면허 제한 적용', detailUrl:'https://www.g2b.go.kr/' },
 ];
 
+/* ═══ 데이터 정규화 ══════════════════════════════════════════
+   Google Sheets 값은 숫자·불리언이 문자열로 올 수 있어 변환합니다.
+   restrict: "TRUE" / "있음" / true  → true
+   amount / score: "187000000" → 187000000
+════════════════════════════════════════════════════════════ */
+function normalizeBid(item, i) {
+  return {
+    ...item,
+    id: i + 1,
+    amount:   Number(item.amount)  || 0,
+    score:    Number(item.score)   || 0,
+    restrict: item.restrict === true
+           || item.restrict === 'TRUE'
+           || item.restrict === '있음'
+           || item.restrict === 'Y',
+    grade:    String(item.grade).trim().toUpperCase(),
+    detailUrl: item.detailUrl || 'https://www.g2b.go.kr/',
+  };
+}
+
 /* ═══ 데이터 로드 ════════════════════════════════════════════
-   GAS_URL이 설정되면 자동으로 Google Sheets 데이터를 사용합니다.
-   연동 시 아래 if 블록만 활성화되며 SAMPLE_BIDS는 무시됩니다.
+   GAS_URL 미설정 → SAMPLE_BIDS 사용 (로컬 테스트)
+   GAS_URL 설정  → Google Sheets 실데이터 fetch
+   URL 하나만 바꾸면 전체 화면이 실데이터로 전환됩니다.
 ════════════════════════════════════════════════════════════ */
 async function loadBids() {
-  if (GAS_URL) {
-    const res = await fetch(GAS_URL);
-    const data = await res.json();
-    return data.map((item, i) => ({ ...item, id: i + 1 }));
+  if (!GAS_URL) {
+    return SAMPLE_BIDS;
   }
-  return SAMPLE_BIDS;
+  const response = await fetch(GAS_URL);
+  const data = await response.json();
+  return data.map(normalizeBid);
 }
 
 /* ═══ 상태 ══════════════════════════════════════════════════ */
@@ -1081,7 +1102,12 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 
 /* ═══ 초기 실행 ═════════════════════════════════════════════ */
 async function init() {
-  BIDS = await loadBids();
+  try {
+    BIDS = await loadBids();
+  } catch (e) {
+    console.error('[loadBids 오류]', e);
+    BIDS = SAMPLE_BIDS;
+  }
   renderKPI();
   render();
 }
