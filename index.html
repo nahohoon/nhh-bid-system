@@ -3,6 +3,21 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- ── GitHub Pages SPA 라우팅 복원 (고객별 접속주소 지원) ──
+     404.html이 /yoonsung → /?/yoonsung 으로 보낸 경우, 원래 경로(/yoonsung)로 주소를 되돌린다.
+     앱 스크립트보다 먼저 실행되어야 하므로 head 최상단에 위치. 루트 접속(nhh.kr)에서는 동작하지 않음. -->
+<script type="text/javascript">
+  (function(l) {
+    if (l.search[1] === '/') {
+      var decoded = l.search.slice(1).split('&').map(function(s) {
+        return s.replace(/~and~/g, '&');
+      }).join('?');
+      window.history.replaceState(null, null,
+        l.pathname.slice(0, -1) + decoded + l.hash
+      );
+    }
+  }(window.location));
+</script>
 <title>나라장터 입찰추천 | 윤성건설</title>
 <style>
 /* ── 구글 폰트 ─────────────────────────────── */
@@ -637,7 +652,7 @@ a { text-decoration: none; color: inherit; }
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
     </div>
     <div class="logo-text">
-      <h1>나라장터 입찰추천시스템</h1>
+      <h1 id="appTitle">나라장터 입찰추천시스템</h1>
       <p>윤성건설(주) 전용 대시보드</p>
     </div>
     <div class="search-wrap">
@@ -831,6 +846,28 @@ a { text-decoration: none; color: inherit; }
 <script>
 /* ═══ 설정 ══════════════════════════════════════════════════ */
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbyHQNrpPcLyaRNxUS74Cft1AehaNnBPhQwyAymcgiYGQNGiPkNw7DVQPEUSYsjOhhI7/exec';
+
+/* ═══ 고객별 접속주소 (업체코드 라우팅) ══════════════════════
+   URL pathname에서 업체코드 추출 → 표시명만 변경. (데이터/계산/시트 로직 미변경)
+   예: /yoonsung → 'yoonsung', / (루트) → 'default'(기존 화면 유지)
+   미등록 코드도 기존 화면 그대로 유지.
+════════════════════════════════════════════════════════════ */
+const COMPANY_MAP = {
+  yoonsung: { name: '윤성건설', title: '윤성건설 입찰분석 시스템' },
+};
+
+function getCompanyCode() {
+  const seg = window.location.pathname.replace(/^\/+|\/+$/g, '').split('/')[0].toLowerCase();
+  return seg || 'default';
+}
+
+function applyCompanyBranding() {
+  const company = COMPANY_MAP[getCompanyCode()];
+  if (!company) return; // default·미등록 코드 → 기존 화면 유지
+  document.title = company.title;
+  const titleEl = document.getElementById('appTitle');
+  if (titleEl) titleEl.textContent = company.title;
+}
 
 /* ═══ 샘플 데이터 (GAS 연동 전 사용) ══════════════════════ */
 const SAMPLE_BIDS = [
@@ -1332,6 +1369,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 
 /* ═══ 초기 실행 ═════════════════════════════════════════════ */
 async function init() {
+  applyCompanyBranding();
   try {
     BIDS = await loadBids();
   } catch (e) {
