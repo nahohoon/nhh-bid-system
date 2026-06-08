@@ -554,6 +554,45 @@ a { text-decoration: none; color: inherit; }
   display: flex; gap: 8px;
 }
 
+/* ── 투찰전략 (카드 권장형 요약 행) ──────────── */
+.strategy-row {
+  display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+  font-size: 11px; color: var(--text2);
+}
+.strategy-row svg { flex-shrink: 0; color: var(--text3); }
+.strategy-row .strat-lbl { font-weight: 700; color: var(--text3); }
+.strategy-row b { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text); }
+.strategy-row .strat-sep { color: var(--text3); }
+
+/* ── 투찰전략 (상세 모달 3단 그리드) ─────────── */
+.strategy-block { display: flex; flex-direction: column; gap: 6px; }
+.strategy-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+}
+.strat-card {
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 10px 8px; text-align: center;
+  background: var(--surface2);
+}
+.strat-card.strat-aggressive { background: #fef2f2; border-color: #fca5a5; }
+.strat-card.strat-recommended { background: var(--primary-light); border-color: var(--primary); }
+.strat-card.strat-safe { background: #f0fdf4; border-color: #86efac; }
+[data-theme="dark"] .strat-card.strat-aggressive { background: #3b0a0a; border-color: #7f1d1d; }
+[data-theme="dark"] .strat-card.strat-recommended { background: #1e3a5f; border-color: #1d4ed8; }
+[data-theme="dark"] .strat-card.strat-safe { background: #052e16; border-color: #166534; }
+.strat-card .strat-name {
+  font-size: 10px; font-weight: 800; margin-bottom: 6px;
+  display: inline-flex; align-items: center; gap: 3px;
+}
+.strat-card.strat-aggressive .strat-name { color: #dc2626; }
+.strat-card.strat-recommended .strat-name { color: var(--primary); }
+.strat-card.strat-safe .strat-name { color: #15803d; }
+[data-theme="dark"] .strat-card.strat-aggressive .strat-name { color: #f87171; }
+[data-theme="dark"] .strat-card.strat-safe .strat-name { color: #4ade80; }
+.strat-card .strat-rate { font-size: 16px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text); line-height: 1.1; }
+.strat-card .strat-rate small { font-size: 10px; font-weight: 600; color: var(--text3); }
+.strat-card .strat-amt { font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text2); margin-top: 4px; }
+
 /* ── 애니메이션 ──────────────────────────────── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(18px); }
@@ -838,6 +877,13 @@ function normalizeBid(item, i) {
     ownerRate: item.ownerRate !== '' && item.ownerRate != null ? Number(item.ownerRate) : '',
     ownerCount: item.ownerCount !== '' && item.ownerCount != null ? Number(item.ownerCount) : '',
     ownerReliability: item.ownerReliability != null ? String(item.ownerReliability).trim() : '',
+    /* ── 투찰전략 (공격형·권장형·안정형) ── 추가 필드 ── */
+    aggressiveRate:   item.aggressiveRate   !== '' && item.aggressiveRate   != null ? Number(item.aggressiveRate)   : '',
+    recommendedRate:  item.recommendedRate  !== '' && item.recommendedRate  != null ? Number(item.recommendedRate)  : '',
+    safeRate:         item.safeRate         !== '' && item.safeRate         != null ? Number(item.safeRate)         : '',
+    aggressiveAmount: item.aggressiveAmount !== '' && item.aggressiveAmount != null ? Number(item.aggressiveAmount) : '',
+    recommendedAmount:item.recommendedAmount!== '' && item.recommendedAmount!= null ? Number(item.recommendedAmount): '',
+    safeAmount:       item.safeAmount       !== '' && item.safeAmount       != null ? Number(item.safeAmount)       : '',
   };
 }
 
@@ -872,6 +918,46 @@ function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>
 const ZONE_EMO = {대구:'🏙️',경북:'🌾',인천:'⚓',서울:'🗼',부산:'🌊'};
 const TYPE_EMO = {토목:'⛏️',포장:'🛣️',상하수도:'💧',철근콘크리트:'🏗️'};
 
+/* ═══ 투찰전략 계산 (공격형·권장형·안정형) ═══════════════════
+   우선순위: GAS JSON 값(aggressiveRate 등) → 없으면 rateMin/rateMax
+   (또는 rateRange "min ~ max")로 클라이언트 계산.
+   공격형 = 하한 + 범위×0.20 / 권장형 = +0.50 / 안정형 = +0.80
+   투찰금액 = 기초금액 × 사정률 / 100. 사정률은 소수점 셋째 자리 반올림.
+════════════════════════════════════════════════════════════ */
+function round3(n) { return Math.round(n * 1000) / 1000; }
+
+function getStrategies(b) {
+  let aggR = b.aggressiveRate, recR = b.recommendedRate, safeR = b.safeRate;
+
+  // JSON 값이 없으면 사정률범위로 계산
+  if (aggR === '' || recR === '' || safeR === '') {
+    let lo = b.rateMin, hi = b.rateMax;
+    if ((lo === '' || hi === '' || lo == null || hi == null) && b.rateRange) {
+      const m = String(b.rateRange).match(/([\d.]+)\s*~\s*([\d.]+)/);
+      if (m) { lo = Number(m[1]); hi = Number(m[2]); }
+    }
+    if (lo !== '' && hi !== '' && lo != null && hi != null && !isNaN(lo) && !isNaN(hi)) {
+      const span = hi - lo;
+      aggR  = round3(lo + span * 0.20);
+      recR  = round3(lo + span * 0.50);
+      safeR = round3(lo + span * 0.80);
+    }
+  }
+
+  const amt = (stored, rate) => {
+    if (stored !== '' && stored != null) return Number(stored);
+    if (rate !== '' && rate != null && b.amount) return Math.round(b.amount * rate / 100);
+    return '';
+  };
+
+  return {
+    aggR, recR, safeR,
+    aggA:  amt(b.aggressiveAmount,  aggR),
+    recA:  amt(b.recommendedAmount, recR),
+    safeA: amt(b.safeAmount,        safeR),
+  };
+}
+
 /* ═══ 필터링 ═════════════════════════════════════════════════ */
 function filtered() {
   return BIDS.filter(b => {
@@ -903,6 +989,7 @@ const ico = {
   zap: `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
   shield: `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
   users: `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  target: `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
 };
 
 /* ═══ 신뢰도 배지 (reliability 값만 추가 표시) ════════════════ */
@@ -929,6 +1016,12 @@ function renderCard(b, delay) {
   const deadlineStr = b.deadline.slice(5) + (isUrgent ? ` (D-${days})` : '');
   const urgentTag = isUrgent ? `<span class="urgent-tag">${ico.zap} D-${days}</span>` : '';
   const restrictTag = b.restrict ? `<span class="restrict-tag">${ico.shield} 업종제한</span>` : '';
+
+  // 투찰전략 (카드에는 권장형만 요약 표시)
+  const st = getStrategies(b);
+  const recRow = (st.recR !== '' && st.recR != null)
+    ? `<div class="strategy-row">${ico.target} <span class="strat-lbl">권장투찰</span> <b>${st.recR}%</b>${(st.recA !== '' && st.recA != null) ? ` <span class="strat-sep">·</span> <b>${fmtMoney(st.recA)}</b>` : ''}</div>`
+    : '';
 
   return `
   <div class="bid-card grade-${b.grade.toLowerCase()}" style="animation-delay:${delay}ms">
@@ -962,6 +1055,7 @@ function renderCard(b, delay) {
         </div>
       </div>
       ${b.rateRange ? `<div class="rate-range-row">${ico.trend} 추천사정률 <b>${esc(b.rateRange)}</b></div>` : ''}
+      ${recRow}
       ${b.ownerRate ? `<div class="owner-row">${ico.building} <span class="owner-lbl">발주처분석</span> <b>${b.ownerRate}%</b> <span class="owner-sep">·</span> <b>${b.ownerCount}건</b> ${relBadge(b.ownerReliability)}</div>` : ''}
       <div class="reason-box">${ico.info} <span>${esc(b.reason)}</span></div>
       <div class="card-btns">
@@ -1082,6 +1176,25 @@ function showDetail(id) {
     ? `<span style="color:#ef4444;font-weight:700;margin-left:6px">D-${days}</span>`
     : `<span style="color:var(--text3);margin-left:6px">D-${days}</span>`;
 
+  // 투찰전략 3단 (공격형·권장형·안정형) — 상세 모달에는 3개 모두 표시
+  const st = getStrategies(b);
+  const stratCell = (cls, mark, name, rate, amt) => `
+    <div class="strat-card ${cls}">
+      <div class="strat-name">${mark} ${name}</div>
+      <div class="strat-rate">${(rate !== '' && rate != null) ? rate + '<small>%</small>' : '-'}</div>
+      <div class="strat-amt">${(amt !== '' && amt != null) ? amt.toLocaleString() + '원' : '-'}</div>
+    </div>`;
+  const hasStrategy = (st.aggR !== '' && st.aggR != null) || (st.recR !== '' && st.recR != null) || (st.safeR !== '' && st.safeR != null);
+  const strategyHtml = hasStrategy ? `
+    <div class="strategy-block">
+      <div class="modal-field-label">투찰전략 (사정률 · 투찰금액)</div>
+      <div class="strategy-grid">
+        ${stratCell('strat-aggressive', '⚡', '공격형', st.aggR, st.aggA)}
+        ${stratCell('strat-recommended', '◎', '권장형', st.recR, st.recA)}
+        ${stratCell('strat-safe', '🛡', '안정형', st.safeR, st.safeA)}
+      </div>
+    </div>` : '';
+
   document.getElementById('detailModalBody').innerHTML = `
     <div class="modal-grade-row" style="background:${infoBg}">
       <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;background:${badgeBg};color:white;flex-shrink:0">${gradeMark} ${gradeLabel}</span>
@@ -1153,6 +1266,7 @@ function showDetail(id) {
         <div class="modal-field-value">${b.ownerReliability ? relBadge(b.ownerReliability) : '-'}</div>
       </div>
     </div>
+    ${strategyHtml}
     <div class="modal-reason" style="background:${infoBg};color:${infoColor}">
       <strong>💡 판단사유</strong><br><span style="margin-top:4px;display:block">${esc(b.reason)}</span>
     </div>
