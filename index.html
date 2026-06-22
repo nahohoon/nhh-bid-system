@@ -434,6 +434,12 @@ a { text-decoration: none; color: inherit; }
 [data-theme="dark"] .strategy-card.safe { border-color: #166534; background: #052e16; }
 .modal-strategy-section { margin-top: 4px; }
 .modal-strategy-section .strategy-grid { gap: 10px; }
+.modal-section-title {
+  font-size: 11px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-top: 6px; margin-bottom: 10px;
+  padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
 
 .card-btns { display: flex; gap: 8px; margin-top: auto; }
 .btn {
@@ -887,6 +893,22 @@ function fmtWon(v) {
   if (n === null) return '-';
   return n.toLocaleString('ko-KR') + '원';
 }
+function displayVal(v, fallback) {
+  if (v === '' || v === null || v === undefined) return fallback || '—';
+  return esc(String(v).trim());
+}
+function displayPctVal(v) {
+  const n = strategyNum(v);
+  return n === null ? '—' : fmtPct(n);
+}
+function displayNumVal(v) {
+  const n = strategyNum(v);
+  return n === null ? '—' : String(n);
+}
+function displayWonVal(v) {
+  const n = strategyNum(v);
+  return n === null ? '—' : fmtWon(v);
+}
 function hasStrategyData(b) {
   return strategyNum(b.aggressiveRate) !== null
     && strategyNum(b.recommendedRate) !== null
@@ -916,10 +938,6 @@ function strategyCardHtml(type, rate, amount, note) {
 function renderStrategySection(b, modal) {
   if (!hasStrategyData(b)) return '';
 
-  const summaryParts = [];
-  if (strategyNum(b.rate) !== null) summaryParts.push('예상낙찰률 ' + fmtPct(b.rate));
-  if (b.rateRange) summaryParts.push('추천사정률 ' + esc(String(b.rateRange).trim()));
-
   let cardsHtml;
   if (isUniformStrategy(b)) {
     cardsHtml = `<div class="strategy-grid uniform">${strategyCardHtml('recommended', b.recommendedRate, b.recommendedAmount, '동일 사정률 구간으로 산출')}</div>`;
@@ -932,10 +950,53 @@ function renderStrategySection(b, modal) {
   }
 
   const wrapClass = modal ? 'strategy-section modal-strategy-section' : 'strategy-section';
+  const titleHtml = modal ? '<div class="modal-section-title">투찰전략</div>' : '';
   return `
     <div class="${wrapClass}">
-      ${summaryParts.length ? `<div class="strategy-summary">${summaryParts.join(' · ')}</div>` : ''}
+      ${titleHtml}
       ${cardsHtml}
+    </div>`;
+}
+function renderModalAnalysisSection(b) {
+  return `
+    <div class="modal-section-title">낙찰 분석 · 추천 투찰</div>
+    <div class="modal-grid">
+      <div class="modal-field">
+        <div class="modal-field-label">예상낙찰률</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${displayPctVal(b.rate)}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">추천사정률범위</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${displayVal(b.rateRange)}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">신뢰도</div>
+        <div class="modal-field-value">${displayVal(b.reliability)}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">경쟁도</div>
+        <div class="modal-field-value">${displayVal(b.competitionLevel)}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">평균참가수</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${displayNumVal(b.avgParticipants)}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">발주처평균낙찰률</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${displayPctVal(b.ownerRate)}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">발주처분석건수</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${displayNumVal(b.ownerCount)}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">발주처신뢰도</div>
+        <div class="modal-field-value">${displayVal(b.ownerReliability)}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">권장형 투찰금액</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${displayWonVal(b.recommendedAmount)}</div>
+      </div>
     </div>`;
 }
 function daysLeft(d) {
@@ -1177,6 +1238,7 @@ function showDetail(id) {
         <div class="modal-field-value">${b.grade}등급 (${gradeLabel})</div>
       </div>
     </div>
+    ${renderModalAnalysisSection(b)}
     <div class="modal-reason" style="background:${infoBg};color:${infoColor}">
       <strong>💡 판단사유</strong><br><span style="margin-top:4px;display:block">${esc(b.reason)}</span>
     </div>
