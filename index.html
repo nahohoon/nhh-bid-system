@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- nhh-bid-dashboard build: 2026-06-12-detail-final-amount -->
+<!-- nhh-bid-dashboard build: 2026-06-22-bssamt-only -->
 <html lang="ko" data-theme="light">
 <head>
 <meta charset="UTF-8" />
@@ -439,6 +439,15 @@ a { text-decoration: none; color: inherit; }
 }
 .strategy-card .strategy-amount { font-size: 10px; color: var(--text2); margin-top: 3px; }
 .strategy-card .strategy-note { font-size: 9px; color: var(--text3); margin-top: 5px; line-height: 1.35; }
+.text-small-keep,
+.modal-hero-caption,
+.modal-prediction-hint,
+.strategy-note,
+.strategy-summary {
+  word-break: keep-all;
+  overflow-wrap: normal;
+  line-break: strict;
+}
 .strategy-card.aggressive { border-color: #fca5a5; background: #fef2f2; }
 .strategy-card.recommended { border-color: #93c5fd; background: #eff6ff; }
 .strategy-card.safe { border-color: #86efac; background: #f0fdf4; }
@@ -496,6 +505,9 @@ a { text-decoration: none; color: inherit; }
 }
 .modal-hero-label {
   font-size: 10px; font-weight: 700; color: var(--text3); margin-bottom: 6px;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  line-break: strict;
 }
 .modal-hero-value {
   font-size: 16px; font-weight: 800;
@@ -913,7 +925,9 @@ function normalizeBid(item, i) {
     ...item,
     id: i + 1,
     deadline: deadlineRaw,
-    amount:   Number(item.amount)  || 0,
+    amount: (item.amount === '' || item.amount === null || item.amount === undefined)
+      ? ''
+      : (Number(item.amount) || 0),
     score:    Number(item.score)   || 0,
     restrict: item.restrict === true
            || item.restrict === 'TRUE'
@@ -945,9 +959,16 @@ let cOpen = false;
 
 /* ═══ 유틸 ══════════════════════════════════════════════════ */
 function fmtMoney(n) {
-  if (n >= 100000000) return (n/100000000).toFixed(1) + '억';
-  if (n >= 10000) return Math.round(n/10000).toLocaleString() + '만';
-  return n.toLocaleString();
+  if (n === '' || n === null || n === undefined) return '기초금액 미공개';
+  const num = Number(n);
+  if (!isFinite(num) || num <= 0) return '기초금액 미공개';
+  if (num >= 100000000) return (num/100000000).toFixed(1) + '억';
+  if (num >= 10000) return Math.round(num/10000).toLocaleString() + '만';
+  return num.toLocaleString();
+}
+function hasBaseAmount(b) {
+  const n = strategyNum(b.amount);
+  return n !== null && n > 0;
 }
 function strategyNum(v) {
   if (v === '' || v === null || v === undefined) return null;
@@ -980,6 +1001,14 @@ function displayWonVal(v) {
   const n = strategyNum(v);
   return n === null ? '—' : fmtWon(v);
 }
+function displayBidAmountVal(v, b) {
+  if (!hasBaseAmount(b)) return '산출 보류';
+  return displayWonVal(v);
+}
+function displayPrimaryBidAmountVal(v, b) {
+  if (!hasBaseAmount(b)) return '기초금액 미공개';
+  return displayWonVal(v);
+}
 function hasStrategyData(b) {
   return strategyNum(b.aggressiveRate) !== null
     && strategyNum(b.recommendedRate) !== null
@@ -996,13 +1025,14 @@ function isUniformStrategy(b) {
   if (aa === null || ra === null || sa === null) return false;
   return ar === rr && rr === sr && aa === ra && ra === sa;
 }
-function strategyCardHtml(type, rate, amount, note) {
+function strategyCardHtml(type, rate, amount, note, bid) {
   const labels = { aggressive: '공격형', recommended: '권장형', safe: '안정형' };
+  const amountLabel = bid ? displayBidAmountVal(amount, bid) : fmtWon(amount);
   return `
     <div class="strategy-card ${type}">
       <div class="strategy-label">${labels[type]}</div>
       <div class="strategy-rate">${fmtPct(rate)}</div>
-      <div class="strategy-amount">${fmtWon(amount)}</div>
+      <div class="strategy-amount">${amountLabel}</div>
       ${note ? `<div class="strategy-note">${esc(note)}</div>` : ''}
     </div>`;
 }
@@ -1011,12 +1041,12 @@ function renderStrategySection(b, modal) {
 
   let cardsHtml;
   if (isUniformStrategy(b)) {
-    cardsHtml = `<div class="strategy-grid uniform">${strategyCardHtml('recommended', b.recommendedRate, b.recommendedAmount, '동일 사정률 구간으로 산출')}</div>`;
+    cardsHtml = `<div class="strategy-grid uniform">${strategyCardHtml('recommended', b.recommendedRate, b.recommendedAmount, '동일 사정률 구간으로 산출', b)}</div>`;
   } else {
     cardsHtml = `<div class="strategy-grid">
-      ${strategyCardHtml('aggressive', b.aggressiveRate, b.aggressiveAmount, '')}
-      ${strategyCardHtml('recommended', b.recommendedRate, b.recommendedAmount, '')}
-      ${strategyCardHtml('safe', b.safeRate, b.safeAmount, '')}
+      ${strategyCardHtml('aggressive', b.aggressiveRate, b.aggressiveAmount, '', b)}
+      ${strategyCardHtml('recommended', b.recommendedRate, b.recommendedAmount, '', b)}
+      ${strategyCardHtml('safe', b.safeRate, b.safeAmount, '', b)}
     </div>`;
   }
 
@@ -1042,12 +1072,15 @@ function formatRateSpanDisplay(b) {
   return (max - min).toFixed(2);
 }
 function renderModalPrimaryHero(b) {
+  const amountCaption = hasBaseAmount(b)
+    ? '최종 권장투찰금액은 권장형 사정률 기준으로 산출됩니다.'
+    : '기초금액이 공개되지 않아 권장투찰금액 산정을 보류합니다.';
   return `
     <div class="modal-primary-hero">
       <div class="modal-primary-amount-wrap">
         <div class="modal-hero-label">최종 권장투찰금액</div>
-        <div class="modal-hero-value modal-hero-value-xl">${displayWonVal(b.recommendedAmount)}</div>
-        <div class="modal-hero-caption">최종 권장투찰금액은 권장형 사정률 기준으로 산출됩니다.</div>
+        <div class="modal-hero-value modal-hero-value-xl">${displayPrimaryBidAmountVal(b.recommendedAmount, b)}</div>
+        <div class="modal-hero-caption">${amountCaption}</div>
       </div>
       <div class="modal-primary-rate-wrap">
         <div class="modal-hero-label">권장형 사정률</div>
@@ -1065,7 +1098,7 @@ function renderModalReferenceMetrics(b) {
       <div class="modal-hero-reference">
         <div class="modal-hero-label">예상낙찰률</div>
         <div class="modal-hero-value">${displayPctVal(b.rate)}</div>
-        <div class="modal-hero-caption">과거 평균 기반 참고값이며, 실제 투찰 기준은 권장 사정률입니다.</div>
+        <div class="modal-hero-caption">과거 평균 기반 참고값입니다.</div>
       </div>
     </div>
     <div class="modal-prediction-hint">추천등급(강추/검토/제외)과 별개입니다. 예측데이터 등급은 낙찰DB 표본 규모를 나타냅니다.</div>`;
@@ -1283,7 +1316,7 @@ function renderKPI() {
   const countC = BIDS.filter(b=>b.grade==='C').length;
   const total  = BIDS.length;
   const urgent = BIDS.filter(b=>daysLeft(b.deadline)<=7).length;
-  const totalAmt = BIDS.filter(b=>b.grade==='A'||b.grade==='B').reduce((s,b)=>s+b.amount, 0);
+  const totalAmt = BIDS.filter(b=>(b.grade==='A'||b.grade==='B') && hasBaseAmount(b)).reduce((s,b)=>s+Number(b.amount), 0);
 
   const kpis = [
     { lbl:'강추 공고',   val:countA+'건', bg:'var(--kpi-a)', ic:'var(--kpi-a-icon)', sub:'즉시 입찰 검토',
