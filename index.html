@@ -1002,11 +1002,7 @@ function displayWonVal(v) {
   return n === null ? '—' : fmtWon(v);
 }
 function displayBidAmountVal(v, b) {
-  if (!hasBaseAmount(b)) return '산출 보류';
-  return displayWonVal(v);
-}
-function displayPrimaryBidAmountVal(v, b) {
-  if (!hasBaseAmount(b)) return '기초금액 미공개';
+  if (!hasBaseAmount(b)) return '—';
   return displayWonVal(v);
 }
 function hasStrategyData(b) {
@@ -1079,7 +1075,7 @@ function renderModalPrimaryHero(b) {
     <div class="modal-primary-hero">
       <div class="modal-primary-amount-wrap">
         <div class="modal-hero-label">최종 권장투찰금액</div>
-        <div class="modal-hero-value modal-hero-value-xl">${displayPrimaryBidAmountVal(b.recommendedAmount, b)}</div>
+        <div class="modal-hero-value modal-hero-value-xl">${displayBidAmountVal(b.recommendedAmount, b)}</div>
         <div class="modal-hero-caption">${amountCaption}</div>
       </div>
       <div class="modal-primary-rate-wrap">
