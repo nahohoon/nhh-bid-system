@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- nhh-bid-dashboard build: 2026-06-22-modal-v3 -->
+<!-- nhh-bid-dashboard build: 2026-06-12-detail-final-amount -->
 <html lang="ko" data-theme="light">
 <head>
 <meta charset="UTF-8" />
@@ -457,6 +457,36 @@ a { text-decoration: none; color: inherit; }
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
   margin-bottom: 8px;
 }
+.modal-primary-hero {
+  display: grid; grid-template-columns: 1.4fr 1fr; gap: 10px;
+  margin-bottom: 10px;
+}
+.modal-primary-amount-wrap,
+.modal-primary-rate-wrap {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px 12px; text-align: center;
+}
+.modal-primary-amount-wrap {
+  background: var(--primary-light); border-color: var(--primary);
+}
+.modal-primary-rate-wrap .modal-hero-value { color: var(--primary); }
+.modal-hero-value-xl {
+  font-size: 22px; font-weight: 800; line-height: 1.2;
+}
+.modal-primary-amount-wrap .modal-hero-value-xl { color: var(--primary); }
+.modal-hero-caption {
+  font-size: 10px; color: var(--text3); line-height: 1.45;
+  margin-top: 8px;
+}
+.modal-reference-metrics {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-bottom: 8px;
+}
+.modal-hero-reference {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 10px; text-align: center;
+}
+.modal-hero-reference .modal-hero-value { font-size: 15px; }
 .modal-hero-item {
   background: var(--surface2); border: 1px solid var(--border);
   border-radius: var(--radius-sm); padding: 12px 10px; text-align: center;
@@ -608,6 +638,8 @@ a { text-decoration: none; color: inherit; }
   .banner-left h2 { font-size: 15px; }
   .modal-grid { grid-template-columns: 1fr; }
   .modal-hero-metrics { grid-template-columns: 1fr; }
+  .modal-primary-hero { grid-template-columns: 1fr; }
+  .modal-reference-metrics { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -1009,20 +1041,31 @@ function formatRateSpanDisplay(b) {
   if (min === null || max === null) return '—';
   return (max - min).toFixed(2);
 }
-function renderModalHeroMetrics(b) {
+function renderModalPrimaryHero(b) {
   return `
-    <div class="modal-hero-metrics">
-      <div class="modal-hero-item">
-        <div class="modal-hero-label">예상낙찰률</div>
-        <div class="modal-hero-value">${displayPctVal(b.rate)}</div>
+    <div class="modal-primary-hero">
+      <div class="modal-primary-amount-wrap">
+        <div class="modal-hero-label">최종 권장투찰금액</div>
+        <div class="modal-hero-value modal-hero-value-xl">${displayWonVal(b.recommendedAmount)}</div>
+        <div class="modal-hero-caption">최종 권장투찰금액은 권장형 사정률 기준으로 산출됩니다.</div>
       </div>
+      <div class="modal-primary-rate-wrap">
+        <div class="modal-hero-label">권장형 사정률</div>
+        <div class="modal-hero-value modal-hero-value-xl">${displayPctVal(b.recommendedRate)}</div>
+      </div>
+    </div>`;
+}
+function renderModalReferenceMetrics(b) {
+  return `
+    <div class="modal-reference-metrics">
       <div class="modal-hero-item">
         <div class="modal-hero-label">추천사정률범위</div>
         <div class="modal-hero-value hero-range">${displayVal(b.rateRange)}</div>
       </div>
-      <div class="modal-hero-item modal-hero-highlight">
-        <div class="modal-hero-label">권장형 투찰금액</div>
-        <div class="modal-hero-value">${displayWonVal(b.recommendedAmount)}</div>
+      <div class="modal-hero-reference">
+        <div class="modal-hero-label">예상낙찰률</div>
+        <div class="modal-hero-value">${displayPctVal(b.rate)}</div>
+        <div class="modal-hero-caption">예상낙찰률은 최근 20/50/100 평균 기반 참고값입니다.</div>
       </div>
     </div>
     <div class="modal-prediction-hint">추천등급(강추/검토/제외)과 별개입니다. 예측데이터 등급은 낙찰DB 표본 규모를 나타냅니다.</div>`;
@@ -1304,8 +1347,9 @@ function showDetail(id) {
       <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;background:${badgeBg};color:white;flex-shrink:0">${gradeMark} ${gradeLabel}</span>
       <span class="modal-bid-name">${esc(b.name)}</span>
     </div>
+    ${renderModalPrimaryHero(b)}
     ${renderStrategySection(b, true)}
-    ${renderModalHeroMetrics(b)}
+    ${renderModalReferenceMetrics(b)}
     <div class="modal-reason" style="background:${infoBg};color:${infoColor}">
       <strong>💡 판단사유</strong><br><span style="margin-top:4px;display:block">${esc(b.reason)}</span>
     </div>
