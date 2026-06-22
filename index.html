@@ -3,21 +3,6 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<!-- ── GitHub Pages SPA 라우팅 복원 (고객별 접속주소 지원) ──
-     404.html이 /yoonsung → /?/yoonsung 으로 보낸 경우, 원래 경로(/yoonsung)로 주소를 되돌린다.
-     앱 스크립트보다 먼저 실행되어야 하므로 head 최상단에 위치. 루트 접속(nhh.kr)에서는 동작하지 않음. -->
-<script type="text/javascript">
-  (function(l) {
-    if (l.search[1] === '/') {
-      var decoded = l.search.slice(1).split('&').map(function(s) {
-        return s.replace(/~and~/g, '&');
-      }).join('?');
-      window.history.replaceState(null, null,
-        l.pathname.slice(0, -1) + decoded + l.hash
-      );
-    }
-  }(window.location));
-</script>
 <title>나라장터 입찰추천 | 윤성건설</title>
 <style>
 /* ── 구글 폰트 ─────────────────────────────── */
@@ -230,11 +215,11 @@ a { text-decoration: none; color: inherit; }
 .banner-inner { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
 .banner-left h2 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
 .banner-left p { font-size: 11px; opacity: 0.75; margin-bottom: 8px; }
-.banner-tags { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.banner-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .banner-tag {
-  font-size: 18px; font-weight: 800;
+  font-size: 10px; font-weight: 600;
   background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
-  padding: 8px 16px; border-radius: var(--radius-chip);
+  padding: 2px 8px; border-radius: var(--radius-chip);
 }
 .banner-stats { display: flex; gap: 20px; }
 .banner-stat { text-align: center; }
@@ -387,58 +372,6 @@ a { text-decoration: none; color: inherit; }
 }
 [data-theme="dark"] .restrict-tag { background: #3b0a0a; color: #f87171; border-color: #7f1d1d; }
 
-/* ── 신뢰도 배지 ─────────────────────────────── */
-.rel-badge {
-  display: inline-flex; align-items: center; gap: 3px;
-  font-size: 10px; font-weight: 800;
-  padding: 2px 7px; border-radius: var(--radius-chip);
-  border: 1px solid transparent; flex-shrink: 0;
-}
-.rel-badge.rel-a { background: #dcfce7; color: #15803d; border-color: #86efac; }
-.rel-badge.rel-b { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
-.rel-badge.rel-c { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
-.rel-badge.rel-ref { background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; }
-[data-theme="dark"] .rel-badge.rel-a { background: #052e16; color: #4ade80; border-color: #166534; }
-[data-theme="dark"] .rel-badge.rel-b { background: #1e3a5f; color: #60a5fa; border-color: #1d4ed8; }
-[data-theme="dark"] .rel-badge.rel-c { background: #1e293b; color: #94a3b8; border-color: #334155; }
-[data-theme="dark"] .rel-badge.rel-ref { background: #172035; color: #4e6487; border-color: #2a3a58; }
-
-/* ── 추천 사정률 범위 ─────────────────────────── */
-.rate-range-row {
-  display: flex; align-items: center; gap: 5px;
-  font-size: 11px; color: var(--text2);
-}
-.rate-range-row svg { flex-shrink: 0; color: var(--text3); }
-.rate-range-row b { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text); }
-
-/* ── 경쟁도 배지 ─────────────────────────────── */
-.comp-badge {
-  display: inline-flex; align-items: center; gap: 3px;
-  font-size: 10px; font-weight: 800;
-  padding: 2px 7px; border-radius: var(--radius-chip);
-  border: 1px solid transparent; flex-shrink: 0;
-}
-.comp-badge.comp-low  { background: #dcfce7; color: #15803d; border-color: #86efac; }
-.comp-badge.comp-mid  { background: #fef9c3; color: #b45309; border-color: #fcd34d; }
-.comp-badge.comp-high { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
-.comp-badge.comp-ref  { background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; }
-[data-theme="dark"] .comp-badge.comp-low  { background: #052e16; color: #4ade80; border-color: #166534; }
-[data-theme="dark"] .comp-badge.comp-mid  { background: #1c1600; color: #fbbf24; border-color: #854d0e; }
-[data-theme="dark"] .comp-badge.comp-high { background: #3b0a0a; color: #f87171; border-color: #7f1d1d; }
-[data-theme="dark"] .comp-badge.comp-ref  { background: #172035; color: #4e6487; border-color: #2a3a58; }
-
-/* ── 발주처 패턴 분석 ─────────────────────────── */
-.owner-row {
-  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
-  font-size: 11px; color: var(--text2);
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); padding: 6px 9px;
-}
-.owner-row svg { flex-shrink: 0; color: var(--text3); }
-.owner-row .owner-lbl { font-weight: 700; color: var(--text3); }
-.owner-row b { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text); }
-.owner-row .owner-sep { color: var(--text3); }
-
 .card-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.45; }
 
 .card-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 10px; }
@@ -472,6 +405,35 @@ a { text-decoration: none; color: inherit; }
 .grade-b .reason-box { background: var(--b-info); color: var(--b-info-text); }
 .grade-c .reason-box { background: var(--c-info); color: var(--c-info-text); }
 .reason-box svg { flex-shrink: 0; margin-top: 1px; }
+
+.strategy-section { margin-top: 2px; }
+.strategy-summary {
+  font-size: 10px; color: var(--text2);
+  margin-bottom: 8px; line-height: 1.5;
+}
+.strategy-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+}
+.strategy-grid.uniform { grid-template-columns: 1fr; max-width: 100%; }
+.strategy-card {
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 8px 6px; text-align: center; background: var(--surface);
+}
+.strategy-card .strategy-label { font-size: 10px; font-weight: 700; color: var(--text2); margin-bottom: 4px; }
+.strategy-card .strategy-rate {
+  font-size: 13px; font-weight: 800;
+  font-family: 'JetBrains Mono', monospace; color: var(--text); line-height: 1.2;
+}
+.strategy-card .strategy-amount { font-size: 10px; color: var(--text2); margin-top: 3px; }
+.strategy-card .strategy-note { font-size: 9px; color: var(--text3); margin-top: 5px; line-height: 1.35; }
+.strategy-card.aggressive { border-color: #fca5a5; background: #fef2f2; }
+.strategy-card.recommended { border-color: #93c5fd; background: #eff6ff; }
+.strategy-card.safe { border-color: #86efac; background: #f0fdf4; }
+[data-theme="dark"] .strategy-card.aggressive { border-color: #7f1d1d; background: #3b0a0a; }
+[data-theme="dark"] .strategy-card.recommended { border-color: #1e3a5f; background: #172554; }
+[data-theme="dark"] .strategy-card.safe { border-color: #166534; background: #052e16; }
+.modal-strategy-section { margin-top: 4px; }
+.modal-strategy-section .strategy-grid { gap: 10px; }
 
 .card-btns { display: flex; gap: 8px; margin-top: auto; }
 .btn {
@@ -569,45 +531,6 @@ a { text-decoration: none; color: inherit; }
   display: flex; gap: 8px;
 }
 
-/* ── 투찰전략 (카드 권장형 요약 행) ──────────── */
-.strategy-row {
-  display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
-  font-size: 11px; color: var(--text2);
-}
-.strategy-row svg { flex-shrink: 0; color: var(--text3); }
-.strategy-row .strat-lbl { font-weight: 700; color: var(--text3); }
-.strategy-row b { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text); }
-.strategy-row .strat-sep { color: var(--text3); }
-
-/* ── 투찰전략 (상세 모달 3단 그리드) ─────────── */
-.strategy-block { display: flex; flex-direction: column; gap: 6px; }
-.strategy-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-}
-.strat-card {
-  border: 1px solid var(--border); border-radius: var(--radius-sm);
-  padding: 10px 8px; text-align: center;
-  background: var(--surface2);
-}
-.strat-card.strat-aggressive { background: #fef2f2; border-color: #fca5a5; }
-.strat-card.strat-recommended { background: var(--primary-light); border-color: var(--primary); }
-.strat-card.strat-safe { background: #f0fdf4; border-color: #86efac; }
-[data-theme="dark"] .strat-card.strat-aggressive { background: #3b0a0a; border-color: #7f1d1d; }
-[data-theme="dark"] .strat-card.strat-recommended { background: #1e3a5f; border-color: #1d4ed8; }
-[data-theme="dark"] .strat-card.strat-safe { background: #052e16; border-color: #166534; }
-.strat-card .strat-name {
-  font-size: 10px; font-weight: 800; margin-bottom: 6px;
-  display: inline-flex; align-items: center; gap: 3px;
-}
-.strat-card.strat-aggressive .strat-name { color: #dc2626; }
-.strat-card.strat-recommended .strat-name { color: var(--primary); }
-.strat-card.strat-safe .strat-name { color: #15803d; }
-[data-theme="dark"] .strat-card.strat-aggressive .strat-name { color: #f87171; }
-[data-theme="dark"] .strat-card.strat-safe .strat-name { color: #4ade80; }
-.strat-card .strat-rate { font-size: 16px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text); line-height: 1.1; }
-.strat-card .strat-rate small { font-size: 10px; font-weight: 600; color: var(--text3); }
-.strat-card .strat-amt { font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text2); margin-top: 4px; }
-
 /* ── 애니메이션 ──────────────────────────────── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(18px); }
@@ -652,7 +575,8 @@ a { text-decoration: none; color: inherit; }
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
     </div>
     <div class="logo-text">
-      <h1 id="appTitle">나라장터 입찰추천시스템</h1>
+      <h1>나라장터 입찰추천시스템</h1>
+      <p>윤성건설(주) 전용 대시보드</p>
     </div>
     <div class="search-wrap">
       <span class="ico">
@@ -684,6 +608,8 @@ a { text-decoration: none; color: inherit; }
   <div class="company-banner section-gap">
     <div class="banner-inner">
       <div class="banner-left">
+        <p>분석 대상 업체</p>
+        <h2>윤성건설(주)</h2>
         <div class="banner-tags">
           <span class="banner-tag">✓ 토목공사업</span>
           <span class="banner-tag">✓ 지반조성·포장공사업</span>
@@ -833,8 +759,8 @@ a { text-decoration: none; color: inherit; }
 
   <!-- 푸터 -->
   <div class="footer">
-    <div class="name"><span id="footerTitle">나라장터 입찰추천시스템</span> v1.0</div>
-    <div class="sub"><span id="footerCompany">윤성건설(주)</span> 전용 · 마지막 갱신: 2026-06-08 09:30</div>
+    <div class="name">나라장터 입찰추천시스템 v1.0</div>
+    <div class="sub">윤성건설(주) 전용 · 마지막 갱신: 2026-06-08 09:30</div>
     <div class="note">본 시스템의 추천 결과는 참고용이며, 최종 입찰 결정은 담당자가 직접 판단하시기 바랍니다.</div>
   </div>
 
@@ -844,50 +770,20 @@ a { text-decoration: none; color: inherit; }
 /* ═══ 설정 ══════════════════════════════════════════════════ */
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbyHQNrpPcLyaRNxUS74Cft1AehaNnBPhQwyAymcgiYGQNGiPkNw7DVQPEUSYsjOhhI7/exec';
 
-/* ═══ 고객별 접속주소 (업체코드 라우팅) ══════════════════════
-   URL pathname에서 업체코드 추출 → 표시명만 변경. (데이터/계산/시트 로직 미변경)
-   예: /yoonsung → 'yoonsung', / (루트) → 'default'(기존 화면 유지)
-   미등록 코드도 기존 화면 그대로 유지.
-════════════════════════════════════════════════════════════ */
-const COMPANY_MAP = {
-  yoonsung: { name: '윤성건설', title: '윤성건설 입찰분석 시스템' },
-};
-
-function getCompanyCode() {
-  const seg = window.location.pathname.replace(/^\/+|\/+$/g, '').split('/')[0].toLowerCase();
-  return seg || 'default';
-}
-
-function applyCompanyBranding() {
-  const company = COMPANY_MAP[getCompanyCode()];
-  if (!company) return; // default·미등록 코드 → 기존 화면 유지
-  document.title = company.title;
-  const titleEl = document.getElementById('appTitle');
-  if (titleEl) titleEl.textContent = company.title;
-  const companyEl = document.getElementById('companyName');
-  if (companyEl) companyEl.textContent = company.name;
-  const headerCompanyEl = document.getElementById('headerCompany');
-  if (headerCompanyEl) headerCompanyEl.textContent = company.name;
-  const footerCompanyEl = document.getElementById('footerCompany');
-  if (footerCompanyEl) footerCompanyEl.textContent = company.name;
-  const footerTitleEl = document.getElementById('footerTitle');
-  if (footerTitleEl) footerTitleEl.textContent = company.title;
-}
-
 /* ═══ 샘플 데이터 (GAS 연동 전 사용) ══════════════════════ */
 const SAMPLE_BIDS = [
   /* ── A 강추 ── */
-  { id:1, reliability:'A', rate:87.421, rateRange:'87.35 ~ 87.48', avgParticipants:42, competitionLevel:'낮음', ownerRate:87.53, ownerCount:126, ownerReliability:'A', no:'SBG202406-0041', name:'상주동부초등학교 진입로 포장 및 기타공사', org:'상주교육지원청', zone:'경북', amount:187000000, deadline:'2026-06-12', type:'포장', restrict:false, score:95, grade:'A', reason:'선호지역(경북) 포장공사, 시공능력 적정, 경쟁업체 少', detailUrl:'https://www.g2b.go.kr/' },
+  { id:1, no:'SBG202406-0041', name:'상주동부초등학교 진입로 포장 및 기타공사', org:'상주교육지원청', zone:'경북', amount:187000000, deadline:'2026-06-12', type:'포장', restrict:false, score:95, grade:'A', reason:'선호지역(경북) 포장공사, 시공능력 적정, 경쟁업체 少', detailUrl:'https://www.g2b.go.kr/' },
   { id:2, no:'SBG202406-0052', name:'상주~도청신도시간 도로건설구간 상수관 이설공사', org:'경북도청', zone:'경북', amount:243000000, deadline:'2026-06-22', type:'상하수도', restrict:false, score:92, grade:'A', reason:'선호지역(경북), 상하수도 면허 보유, 공공발주 고신뢰 기관', detailUrl:'https://www.g2b.go.kr/' },
-  { id:3, reliability:'B', rate:86.912, rateRange:'86.80 ~ 87.10', avgParticipants:86, competitionLevel:'보통', ownerRate:86.74, ownerCount:63, ownerReliability:'B', no:'SBG202406-0067', name:'대구 달성군 농촌 도로정비 및 배수로 개설공사', org:'달성군청', zone:'대구', amount:156000000, deadline:'2026-06-25', type:'토목', restrict:false, score:91, grade:'A', reason:'선호지역(대구), 토목공사 면허 적합, 금액 범위 최적', detailUrl:'https://www.g2b.go.kr/' },
-  { id:4, reliability:'C', rate:88.105, rateRange:'87.90 ~ 88.30', avgParticipants:130, competitionLevel:'높음', ownerRate:88.21, ownerCount:34, ownerReliability:'C', no:'SBG202406-0078', name:'대구 수성구 하수관로 정비공사', org:'대구광역시 수성구청', zone:'대구', amount:198000000, deadline:'2026-06-30', type:'상하수도', restrict:false, score:88, grade:'A', reason:'선호지역(대구), 상하수도 면허 보유, 관납실적 축적 가능', detailUrl:'https://www.g2b.go.kr/' },
+  { id:3, no:'SBG202406-0067', name:'대구 달성군 농촌 도로정비 및 배수로 개설공사', org:'달성군청', zone:'대구', amount:156000000, deadline:'2026-06-25', type:'토목', restrict:false, score:91, grade:'A', reason:'선호지역(대구), 토목공사 면허 적합, 금액 범위 최적', detailUrl:'https://www.g2b.go.kr/' },
+  { id:4, no:'SBG202406-0078', name:'대구 수성구 하수관로 정비공사', org:'대구광역시 수성구청', zone:'대구', amount:198000000, deadline:'2026-06-30', type:'상하수도', restrict:false, score:88, grade:'A', reason:'선호지역(대구), 상하수도 면허 보유, 관납실적 축적 가능', detailUrl:'https://www.g2b.go.kr/' },
   /* ── B 검토 ── */
   { id:5, no:'SBG202406-0089', name:'안동시 도시계획도로 개설공사', org:'안동시청', zone:'경북', amount:378000000, deadline:'2026-07-05', type:'토목', restrict:false, score:72, grade:'B', reason:'경북 소재이나 금액이 시공능력 상한에 근접, 경쟁 심화 예상', detailUrl:'https://www.g2b.go.kr/' },
   { id:6, no:'SBG202406-0101', name:'구미시 공단지역 우수 배수관로 개량공사', org:'구미시청', zone:'경북', amount:295000000, deadline:'2026-07-10', type:'상하수도', restrict:false, score:68, grade:'B', reason:'경북 소재, 면허 적합. 구미시 텃세 있는 지역으로 분류', detailUrl:'https://www.g2b.go.kr/' },
   { id:7, no:'SBG202406-0115', name:'경주시 국도대체우회도로 포장공사', org:'경주국토관리사무소', zone:'경북', amount:512000000, deadline:'2026-07-15', type:'포장', restrict:true, score:58, grade:'B', reason:'업종제한 있음, 금액 상한 초과 우려. 포장면허 확인 필요', detailUrl:'https://www.g2b.go.kr/' },
   { id:8, no:'SBG202406-0122', name:'포항시 영일만항 배후도로 개설공사', org:'포항시청', zone:'경북', amount:421000000, deadline:'2026-07-18', type:'토목', restrict:false, score:61, grade:'B', reason:'경북이나 거리 원거리(포항), 금액 다소 높음', detailUrl:'https://www.g2b.go.kr/' },
   /* ── C 제외 ── */
-  { id:9, reliability:'참고용', no:'SBG202406-0133', name:'인천광역시 서구 아파트 단지 철근콘크리트 공사', org:'인천서구청', zone:'인천', amount:890000000, deadline:'2026-07-20', type:'철근콘크리트', restrict:true, score:18, grade:'C', reason:'비선호지역(인천), 보유면허 미해당(철근콘크리트), 금액초과', detailUrl:'https://www.g2b.go.kr/' },
+  { id:9, no:'SBG202406-0133', name:'인천광역시 서구 아파트 단지 철근콘크리트 공사', org:'인천서구청', zone:'인천', amount:890000000, deadline:'2026-07-20', type:'철근콘크리트', restrict:true, score:18, grade:'C', reason:'비선호지역(인천), 보유면허 미해당(철근콘크리트), 금액초과', detailUrl:'https://www.g2b.go.kr/' },
   { id:10, no:'SBG202406-0144', name:'서울시 강남구 도로 재포장 대규모 공사', org:'서울시 강남구청', zone:'서울', amount:1250000000, deadline:'2026-07-22', type:'포장', restrict:true, score:12, grade:'C', reason:'비선호지역(서울), 시공능력평가액 대폭 초과, 참가자격 미달', detailUrl:'https://www.g2b.go.kr/' },
   { id:11, no:'SBG202406-0156', name:'부산시 해운대 해안도로 교량 신설공사', org:'부산시청', zone:'부산', amount:2100000000, deadline:'2026-07-25', type:'토목', restrict:true, score:8, grade:'C', reason:'비선호지역(부산), 금액 초과(21억), 면허 제한 적용', detailUrl:'https://www.g2b.go.kr/' },
 ];
@@ -897,10 +793,49 @@ const SAMPLE_BIDS = [
    restrict: "TRUE" / "있음" / true  → true
    amount / score: "187000000" → 187000000
 ════════════════════════════════════════════════════════════ */
+function getBidDeadlineRaw(item) {
+  return item.deadline || item.endDate || item['마감일'] || '';
+}
+
+function parseDeadline(value) {
+  if (value === null || value === undefined || value === '') return null;
+  if (value instanceof Date) {
+    const t = value.getTime();
+    return Number.isNaN(t) ? null : value;
+  }
+  const str = String(value).trim();
+  if (!str) return null;
+  const d = new Date(str);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function isActiveBid(item) {
+  const no = String(item.no || '').trim();
+  if (!no) return false;
+  const deadline = parseDeadline(getBidDeadlineRaw(item));
+  if (!deadline) return false;
+  return deadline.getTime() > Date.now();
+}
+
+function filterActiveBids(items) {
+  return items.filter(isActiveBid);
+}
+
+function formatDeadlineLabel(value) {
+  const d = parseDeadline(value);
+  if (!d) return String(value || '');
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 function normalizeBid(item, i) {
+  const deadlineRaw = getBidDeadlineRaw(item);
   return {
     ...item,
     id: i + 1,
+    deadline: deadlineRaw,
     amount:   Number(item.amount)  || 0,
     score:    Number(item.score)   || 0,
     restrict: item.restrict === true
@@ -909,23 +844,6 @@ function normalizeBid(item, i) {
            || item.restrict === 'Y',
     grade:    String(item.grade).trim().toUpperCase(),
     detailUrl: item.detailUrl || 'https://www.g2b.go.kr/',
-    reliability: item.reliability != null ? String(item.reliability).trim() : '',
-    rate:     Number(item.rate) || 0,
-    rateMin:  item.rateMin !== '' && item.rateMin != null ? Number(item.rateMin) : '',
-    rateMax:  item.rateMax !== '' && item.rateMax != null ? Number(item.rateMax) : '',
-    rateRange: item.rateRange != null ? String(item.rateRange).trim() : '',
-    avgParticipants: item.avgParticipants !== '' && item.avgParticipants != null ? Number(item.avgParticipants) : '',
-    competitionLevel: item.competitionLevel != null ? String(item.competitionLevel).trim() : '',
-    ownerRate: item.ownerRate !== '' && item.ownerRate != null ? Number(item.ownerRate) : '',
-    ownerCount: item.ownerCount !== '' && item.ownerCount != null ? Number(item.ownerCount) : '',
-    ownerReliability: item.ownerReliability != null ? String(item.ownerReliability).trim() : '',
-    /* ── 투찰전략 (공격형·권장형·안정형) ── 추가 필드 ── */
-    aggressiveRate:   item.aggressiveRate   !== '' && item.aggressiveRate   != null ? Number(item.aggressiveRate)   : '',
-    recommendedRate:  item.recommendedRate  !== '' && item.recommendedRate  != null ? Number(item.recommendedRate)  : '',
-    safeRate:         item.safeRate         !== '' && item.safeRate         != null ? Number(item.safeRate)         : '',
-    aggressiveAmount: item.aggressiveAmount !== '' && item.aggressiveAmount != null ? Number(item.aggressiveAmount) : '',
-    recommendedAmount:item.recommendedAmount!== '' && item.recommendedAmount!= null ? Number(item.recommendedAmount): '',
-    safeAmount:       item.safeAmount       !== '' && item.safeAmount       != null ? Number(item.safeAmount)       : '',
   };
 }
 
@@ -936,11 +854,11 @@ function normalizeBid(item, i) {
 ════════════════════════════════════════════════════════════ */
 async function loadBids() {
   if (!GAS_URL) {
-    return SAMPLE_BIDS;
+    return filterActiveBids(SAMPLE_BIDS).map(normalizeBid);
   }
   const response = await fetch(GAS_URL);
   const data = await response.json();
-  return data.map(normalizeBid);
+  return filterActiveBids(data).map(normalizeBid);
 }
 
 /* ═══ 상태 ══════════════════════════════════════════════════ */
@@ -954,51 +872,81 @@ function fmtMoney(n) {
   if (n >= 10000) return Math.round(n/10000).toLocaleString() + '만';
   return n.toLocaleString();
 }
-function daysLeft(d) { return Math.ceil((new Date(d) - Date.now()) / 86400000); }
+function strategyNum(v) {
+  if (v === '' || v === null || v === undefined) return null;
+  const n = Number(v);
+  return isFinite(n) ? n : null;
+}
+function fmtPct(v) {
+  const n = strategyNum(v);
+  if (n === null) return '-';
+  return n.toFixed(2) + '%';
+}
+function fmtWon(v) {
+  const n = strategyNum(v);
+  if (n === null) return '-';
+  return n.toLocaleString('ko-KR') + '원';
+}
+function hasStrategyData(b) {
+  return strategyNum(b.aggressiveRate) !== null
+    && strategyNum(b.recommendedRate) !== null
+    && strategyNum(b.safeRate) !== null;
+}
+function isUniformStrategy(b) {
+  const ar = strategyNum(b.aggressiveRate);
+  const rr = strategyNum(b.recommendedRate);
+  const sr = strategyNum(b.safeRate);
+  const aa = strategyNum(b.aggressiveAmount);
+  const ra = strategyNum(b.recommendedAmount);
+  const sa = strategyNum(b.safeAmount);
+  if (ar === null || rr === null || sr === null) return false;
+  if (aa === null || ra === null || sa === null) return false;
+  return ar === rr && rr === sr && aa === ra && ra === sa;
+}
+function strategyCardHtml(type, rate, amount, note) {
+  const labels = { aggressive: '공격형', recommended: '권장형', safe: '안정형' };
+  return `
+    <div class="strategy-card ${type}">
+      <div class="strategy-label">${labels[type]}</div>
+      <div class="strategy-rate">${fmtPct(rate)}</div>
+      <div class="strategy-amount">${fmtWon(amount)}</div>
+      ${note ? `<div class="strategy-note">${esc(note)}</div>` : ''}
+    </div>`;
+}
+function renderStrategySection(b, modal) {
+  if (!hasStrategyData(b)) return '';
+
+  const summaryParts = [];
+  if (strategyNum(b.rate) !== null) summaryParts.push('예상낙찰률 ' + fmtPct(b.rate));
+  if (b.rateRange) summaryParts.push('추천사정률 ' + esc(String(b.rateRange).trim()));
+
+  let cardsHtml;
+  if (isUniformStrategy(b)) {
+    cardsHtml = `<div class="strategy-grid uniform">${strategyCardHtml('recommended', b.recommendedRate, b.recommendedAmount, '동일 사정률 구간으로 산출')}</div>`;
+  } else {
+    cardsHtml = `<div class="strategy-grid">
+      ${strategyCardHtml('aggressive', b.aggressiveRate, b.aggressiveAmount, '')}
+      ${strategyCardHtml('recommended', b.recommendedRate, b.recommendedAmount, '')}
+      ${strategyCardHtml('safe', b.safeRate, b.safeAmount, '')}
+    </div>`;
+  }
+
+  const wrapClass = modal ? 'strategy-section modal-strategy-section' : 'strategy-section';
+  return `
+    <div class="${wrapClass}">
+      ${summaryParts.length ? `<div class="strategy-summary">${summaryParts.join(' · ')}</div>` : ''}
+      ${cardsHtml}
+    </div>`;
+}
+function daysLeft(d) {
+  const deadline = parseDeadline(d);
+  if (!deadline) return 999;
+  return Math.ceil((deadline - Date.now()) / 86400000);
+}
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 const ZONE_EMO = {대구:'🏙️',경북:'🌾',인천:'⚓',서울:'🗼',부산:'🌊'};
 const TYPE_EMO = {토목:'⛏️',포장:'🛣️',상하수도:'💧',철근콘크리트:'🏗️'};
-
-/* ═══ 투찰전략 계산 (공격형·권장형·안정형) ═══════════════════
-   우선순위: GAS JSON 값(aggressiveRate 등) → 없으면 rateMin/rateMax
-   (또는 rateRange "min ~ max")로 클라이언트 계산.
-   공격형 = 하한 + 범위×0.20 / 권장형 = +0.50 / 안정형 = +0.80
-   투찰금액 = 기초금액 × 사정률 / 100. 사정률은 소수점 셋째 자리 반올림.
-════════════════════════════════════════════════════════════ */
-function round3(n) { return Math.round(n * 1000) / 1000; }
-
-function getStrategies(b) {
-  let aggR = b.aggressiveRate, recR = b.recommendedRate, safeR = b.safeRate;
-
-  // JSON 값이 없으면 사정률범위로 계산
-  if (aggR === '' || recR === '' || safeR === '') {
-    let lo = b.rateMin, hi = b.rateMax;
-    if ((lo === '' || hi === '' || lo == null || hi == null) && b.rateRange) {
-      const m = String(b.rateRange).match(/([\d.]+)\s*~\s*([\d.]+)/);
-      if (m) { lo = Number(m[1]); hi = Number(m[2]); }
-    }
-    if (lo !== '' && hi !== '' && lo != null && hi != null && !isNaN(lo) && !isNaN(hi)) {
-      const span = hi - lo;
-      aggR  = round3(lo + span * 0.20);
-      recR  = round3(lo + span * 0.50);
-      safeR = round3(lo + span * 0.80);
-    }
-  }
-
-  const amt = (stored, rate) => {
-    if (stored !== '' && stored != null) return Number(stored);
-    if (rate !== '' && rate != null && b.amount) return Math.round(b.amount * rate / 100);
-    return '';
-  };
-
-  return {
-    aggR, recR, safeR,
-    aggA:  amt(b.aggressiveAmount,  aggR),
-    recA:  amt(b.recommendedAmount, recR),
-    safeA: amt(b.safeAmount,        safeR),
-  };
-}
 
 /* ═══ 필터링 ═════════════════════════════════════════════════ */
 function filtered() {
@@ -1030,40 +978,16 @@ const ico = {
   ext: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`,
   zap: `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
   shield: `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
-  users: `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-  target: `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
 };
-
-/* ═══ 신뢰도 배지 (reliability 값만 추가 표시) ════════════════ */
-function relBadge(rel) {
-  const r = String(rel || '').trim();
-  if (!r) return '';
-  const cls = r === 'A' ? 'rel-a' : r === 'B' ? 'rel-b' : r === 'C' ? 'rel-c' : 'rel-ref';
-  const label = (r === 'A' || r === 'B' || r === 'C') ? ('신뢰도 ' + r) : r;
-  return `<span class="rel-badge ${cls}" title="낙찰 데이터 신뢰도">${ico.shield} ${esc(label)}</span>`;
-}
-
-/* ═══ 경쟁도 배지 (competitionLevel 값만 추가 표시) ═══════════ */
-function compBadge(level) {
-  const v = String(level || '').trim();
-  if (!v) return '';
-  const cls = v === '낮음' ? 'comp-low' : v === '보통' ? 'comp-mid' : v === '높음' ? 'comp-high' : 'comp-ref';
-  return `<span class="comp-badge ${cls}" title="과거 유사 입찰 평균 경쟁 수준">${ico.users} 경쟁 ${esc(v)}</span>`;
-}
 
 /* ═══ 카드 HTML 생성 ═════════════════════════════════════════ */
 function renderCard(b, delay) {
   const days = daysLeft(b.deadline);
   const isUrgent = days <= 5;
-  const deadlineStr = b.deadline.slice(5) + (isUrgent ? ` (D-${days})` : '');
+  const deadlineLabel = formatDeadlineLabel(b.deadline);
+  const deadlineStr = deadlineLabel.slice(5) + (isUrgent ? ` (D-${days})` : '');
   const urgentTag = isUrgent ? `<span class="urgent-tag">${ico.zap} D-${days}</span>` : '';
   const restrictTag = b.restrict ? `<span class="restrict-tag">${ico.shield} 업종제한</span>` : '';
-
-  // 투찰전략 (카드에는 권장형만 요약 표시)
-  const st = getStrategies(b);
-  const recRow = (st.recR !== '' && st.recR != null)
-    ? `<div class="strategy-row">${ico.target} <span class="strat-lbl">권장투찰</span> <b>${st.recR}%</b>${(st.recA !== '' && st.recA != null) ? ` <span class="strat-sep">·</span> <b>${fmtMoney(st.recA)}</b>` : ''}</div>`
-    : '';
 
   return `
   <div class="bid-card grade-${b.grade.toLowerCase()}" style="animation-delay:${delay}ms">
@@ -1074,8 +998,6 @@ function renderCard(b, delay) {
           ${b.grade === 'A' ? '✓' : b.grade === 'B' ? '⚠' : '✕'} ${b.grade === 'A' ? '강 추' : b.grade === 'B' ? '검 토' : '제 외'}
         </span>
         <span class="card-num">${esc(b.no)}</span>
-        ${relBadge(b.reliability)}
-        ${compBadge(b.competitionLevel)}
         ${urgentTag}
         ${restrictTag}
       </div>
@@ -1096,10 +1018,8 @@ function renderCard(b, delay) {
           <div class="score-bar-fill" style="width:0%" data-w="${b.score}%"></div>
         </div>
       </div>
-      ${b.rateRange ? `<div class="rate-range-row">${ico.trend} 추천사정률 <b>${esc(b.rateRange)}</b></div>` : ''}
-      ${recRow}
-      ${b.ownerRate ? `<div class="owner-row">${ico.building} <span class="owner-lbl">발주처분석</span> <b>${b.ownerRate}%</b> <span class="owner-sep">·</span> <b>${b.ownerCount}건</b> ${relBadge(b.ownerReliability)}</div>` : ''}
       <div class="reason-box">${ico.info} <span>${esc(b.reason)}</span></div>
+      ${renderStrategySection(b, false)}
       <div class="card-btns">
         <button class="btn btn-outline" onclick="showDetail(${b.id})">${ico.search} 상세보기</button>
         <button class="btn btn-fill" onclick="openG2b(${b.id})">${ico.ext} 나라장터</button>
@@ -1218,25 +1138,6 @@ function showDetail(id) {
     ? `<span style="color:#ef4444;font-weight:700;margin-left:6px">D-${days}</span>`
     : `<span style="color:var(--text3);margin-left:6px">D-${days}</span>`;
 
-  // 투찰전략 3단 (공격형·권장형·안정형) — 상세 모달에는 3개 모두 표시
-  const st = getStrategies(b);
-  const stratCell = (cls, mark, name, rate, amt) => `
-    <div class="strat-card ${cls}">
-      <div class="strat-name">${mark} ${name}</div>
-      <div class="strat-rate">${(rate !== '' && rate != null) ? rate + '<small>%</small>' : '-'}</div>
-      <div class="strat-amt">${(amt !== '' && amt != null) ? amt.toLocaleString() + '원' : '-'}</div>
-    </div>`;
-  const hasStrategy = (st.aggR !== '' && st.aggR != null) || (st.recR !== '' && st.recR != null) || (st.safeR !== '' && st.safeR != null);
-  const strategyHtml = hasStrategy ? `
-    <div class="strategy-block">
-      <div class="modal-field-label">투찰전략 (사정률 · 투찰금액)</div>
-      <div class="strategy-grid">
-        ${stratCell('strat-aggressive', '⚡', '공격형', st.aggR, st.aggA)}
-        ${stratCell('strat-recommended', '◎', '권장형', st.recR, st.recA)}
-        ${stratCell('strat-safe', '🛡', '안정형', st.safeR, st.safeA)}
-      </div>
-    </div>` : '';
-
   document.getElementById('detailModalBody').innerHTML = `
     <div class="modal-grade-row" style="background:${infoBg}">
       <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;background:${badgeBg};color:white;flex-shrink:0">${gradeMark} ${gradeLabel}</span>
@@ -1265,7 +1166,7 @@ function showDetail(id) {
       </div>
       <div class="modal-field">
         <div class="modal-field-label">마감일</div>
-        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${b.deadline}${urgentHtml}</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${formatDeadlineLabel(b.deadline)}${urgentHtml}</div>
       </div>
       <div class="modal-field">
         <div class="modal-field-label">추천점수</div>
@@ -1275,43 +1176,11 @@ function showDetail(id) {
         <div class="modal-field-label">등급</div>
         <div class="modal-field-value">${b.grade}등급 (${gradeLabel})</div>
       </div>
-      <div class="modal-field">
-        <div class="modal-field-label">신뢰도</div>
-        <div class="modal-field-value">${b.reliability ? relBadge(b.reliability) : '-'}</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">예상낙찰률</div>
-        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${b.rate ? b.rate + '%' : '-'}</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">추천사정률범위</div>
-        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${b.rateRange ? esc(b.rateRange) : '-'}</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">평균참가수</div>
-        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${(b.avgParticipants !== '' && b.avgParticipants != null) ? b.avgParticipants + '개사' : '-'}</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">경쟁도</div>
-        <div class="modal-field-value">${b.competitionLevel ? compBadge(b.competitionLevel) : '-'}</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">발주처평균낙찰률</div>
-        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${b.ownerRate ? b.ownerRate + '%' : '-'}</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">발주처분석건수</div>
-        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${(b.ownerCount !== '' && b.ownerCount != null) ? b.ownerCount + '건' : '-'}</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">발주처신뢰도</div>
-        <div class="modal-field-value">${b.ownerReliability ? relBadge(b.ownerReliability) : '-'}</div>
-      </div>
     </div>
-    ${strategyHtml}
     <div class="modal-reason" style="background:${infoBg};color:${infoColor}">
       <strong>💡 판단사유</strong><br><span style="margin-top:4px;display:block">${esc(b.reason)}</span>
     </div>
+    ${renderStrategySection(b, true)}
   `;
 
   document.getElementById('modalG2bBtn').onclick = () =>
@@ -1374,12 +1243,11 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 
 /* ═══ 초기 실행 ═════════════════════════════════════════════ */
 async function init() {
-  applyCompanyBranding();
   try {
     BIDS = await loadBids();
   } catch (e) {
     console.error('[loadBids 오류]', e);
-    BIDS = SAMPLE_BIDS;
+    BIDS = filterActiveBids(SAMPLE_BIDS).map(normalizeBid);
   }
   renderKPI();
   render();
