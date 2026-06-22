@@ -1,9 +1,22 @@
 <!DOCTYPE html>
+<!-- nhh-bid-dashboard build: 2026-06-22-modal-v3 -->
 <html lang="ko" data-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>나라장터 입찰추천 | 윤성건설</title>
+<script type="text/javascript">
+(function(l) {
+  if (l.search.length > 1 && l.search.charAt(1) === '/') {
+    var decoded = l.search.slice(1).split('&').map(function(s) {
+      return s.replace(/~and~/g, '&');
+    }).join('?');
+    window.history.replaceState(null, null,
+      l.pathname.slice(0, -1) + decoded + l.hash
+    );
+  }
+}(window.location));
+</script>
 <style>
 /* ── 구글 폰트 ─────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -440,6 +453,31 @@ a { text-decoration: none; color: inherit; }
   margin-top: 6px; margin-bottom: 10px;
   padding-bottom: 6px; border-bottom: 1px solid var(--border);
 }
+.modal-hero-metrics {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  margin-bottom: 8px;
+}
+.modal-hero-item {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 10px; text-align: center;
+}
+.modal-hero-highlight {
+  background: var(--primary-light); border-color: var(--primary);
+}
+.modal-hero-label {
+  font-size: 10px; font-weight: 700; color: var(--text3); margin-bottom: 6px;
+}
+.modal-hero-value {
+  font-size: 16px; font-weight: 800;
+  font-family: 'JetBrains Mono', monospace; color: var(--text); line-height: 1.25;
+}
+.modal-hero-value.hero-range { font-size: 13px; }
+.modal-hero-highlight .modal-hero-value { color: var(--primary); }
+.modal-prediction-hint {
+  font-size: 10px; color: var(--text3); line-height: 1.45;
+  margin-bottom: 12px; padding: 8px 10px;
+  background: var(--surface2); border-radius: var(--radius-sm);
+}
 
 .card-btns { display: flex; gap: 8px; margin-top: auto; }
 .btn {
@@ -569,6 +607,7 @@ a { text-decoration: none; color: inherit; }
   .kpi-grid { grid-template-columns: 1fr 1fr; }
   .banner-left h2 { font-size: 15px; }
   .modal-grid { grid-template-columns: 1fr; }
+  .modal-hero-metrics { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -957,21 +996,48 @@ function renderStrategySection(b, modal) {
       ${cardsHtml}
     </div>`;
 }
-function renderModalAnalysisSection(b) {
+function formatPredictionDataLabel(grade, count) {
+  const g = String(grade || '').trim();
+  if (!g) return '—';
+  const n = strategyNum(count);
+  if (n !== null) return '예측데이터 ' + g + ' (' + n + '건)';
+  return '예측데이터 ' + g;
+}
+function formatRateSpanDisplay(b) {
+  const min = strategyNum(b.rateMin);
+  const max = strategyNum(b.rateMax);
+  if (min === null || max === null) return '—';
+  return (max - min).toFixed(2);
+}
+function renderModalHeroMetrics(b) {
   return `
-    <div class="modal-section-title">낙찰 분석 · 추천 투찰</div>
+    <div class="modal-hero-metrics">
+      <div class="modal-hero-item">
+        <div class="modal-hero-label">예상낙찰률</div>
+        <div class="modal-hero-value">${displayPctVal(b.rate)}</div>
+      </div>
+      <div class="modal-hero-item">
+        <div class="modal-hero-label">추천사정률범위</div>
+        <div class="modal-hero-value hero-range">${displayVal(b.rateRange)}</div>
+      </div>
+      <div class="modal-hero-item modal-hero-highlight">
+        <div class="modal-hero-label">권장형 투찰금액</div>
+        <div class="modal-hero-value">${displayWonVal(b.recommendedAmount)}</div>
+      </div>
+    </div>
+    <div class="modal-prediction-hint">추천등급(강추/검토/제외)과 별개입니다. 예측데이터 등급은 낙찰DB 표본 규모를 나타냅니다.</div>`;
+}
+function renderModalAnalysisDetail(b) {
+  return `
+    <div class="modal-section-title">낙찰 분석</div>
     <div class="modal-grid">
       <div class="modal-field">
-        <div class="modal-field-label">예상낙찰률</div>
-        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${displayPctVal(b.rate)}</div>
+        <div class="modal-field-label">예측데이터</div>
+        <div class="modal-field-value">${esc(formatPredictionDataLabel(b.reliability))}</div>
       </div>
       <div class="modal-field">
-        <div class="modal-field-label">추천사정률범위</div>
-        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${displayVal(b.rateRange)}</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">신뢰도</div>
-        <div class="modal-field-value">${displayVal(b.reliability)}</div>
+        <div class="modal-field-label">사정률 범위폭</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${formatRateSpanDisplay(b)}</div>
       </div>
       <div class="modal-field">
         <div class="modal-field-label">경쟁도</div>
@@ -990,12 +1056,46 @@ function renderModalAnalysisSection(b) {
         <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${displayNumVal(b.ownerCount)}</div>
       </div>
       <div class="modal-field">
-        <div class="modal-field-label">발주처신뢰도</div>
-        <div class="modal-field-value">${displayVal(b.ownerReliability)}</div>
+        <div class="modal-field-label">발주처 예측데이터</div>
+        <div class="modal-field-value">${esc(formatPredictionDataLabel(b.ownerReliability, b.ownerCount))}</div>
+      </div>
+    </div>`;
+}
+function renderModalBasicInfo(b, gradeLabel, urgentHtml) {
+  return `
+    <div class="modal-section-title">기본 정보</div>
+    <div class="modal-grid">
+      <div class="modal-field">
+        <div class="modal-field-label">공고번호</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace;font-size:11px">${esc(b.no)}</div>
       </div>
       <div class="modal-field">
-        <div class="modal-field-label">권장형 투찰금액</div>
-        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${displayWonVal(b.recommendedAmount)}</div>
+        <div class="modal-field-label">발주기관</div>
+        <div class="modal-field-value">${esc(b.org)}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">지역</div>
+        <div class="modal-field-value">${ZONE_EMO[b.zone]||'📍'} ${esc(b.zone)}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">공종</div>
+        <div class="modal-field-value">${TYPE_EMO[b.type]||'🔧'} ${esc(b.type)}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">기초금액</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${fmtMoney(b.amount)}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">마감일</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${formatDeadlineLabel(b.deadline)}${urgentHtml}</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">추천점수</div>
+        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${b.score}점</div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-field-label">등급</div>
+        <div class="modal-field-value">${b.grade}등급 (${gradeLabel})</div>
       </div>
     </div>`;
 }
@@ -1204,45 +1304,13 @@ function showDetail(id) {
       <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;background:${badgeBg};color:white;flex-shrink:0">${gradeMark} ${gradeLabel}</span>
       <span class="modal-bid-name">${esc(b.name)}</span>
     </div>
-    <div class="modal-grid">
-      <div class="modal-field">
-        <div class="modal-field-label">공고번호</div>
-        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace;font-size:11px">${esc(b.no)}</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">발주기관</div>
-        <div class="modal-field-value">${esc(b.org)}</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">지역</div>
-        <div class="modal-field-value">${ZONE_EMO[b.zone]||'📍'} ${esc(b.zone)}</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">공종</div>
-        <div class="modal-field-value">${TYPE_EMO[b.type]||'🔧'} ${esc(b.type)}</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">기초금액</div>
-        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${fmtMoney(b.amount)}</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">마감일</div>
-        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${formatDeadlineLabel(b.deadline)}${urgentHtml}</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">추천점수</div>
-        <div class="modal-field-value" style="font-family:'JetBrains Mono',monospace">${b.score}점</div>
-      </div>
-      <div class="modal-field">
-        <div class="modal-field-label">등급</div>
-        <div class="modal-field-value">${b.grade}등급 (${gradeLabel})</div>
-      </div>
-    </div>
-    ${renderModalAnalysisSection(b)}
+    ${renderStrategySection(b, true)}
+    ${renderModalHeroMetrics(b)}
     <div class="modal-reason" style="background:${infoBg};color:${infoColor}">
       <strong>💡 판단사유</strong><br><span style="margin-top:4px;display:block">${esc(b.reason)}</span>
     </div>
-    ${renderStrategySection(b, true)}
+    ${renderModalAnalysisDetail(b)}
+    ${renderModalBasicInfo(b, gradeLabel, urgentHtml)}
   `;
 
   document.getElementById('modalG2bBtn').onclick = () =>
