@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- nhh-bid-dashboard build: 2026-06-22-bssamt-only -->
+<!-- nhh-bid-dashboard build: 2026-06-24-modal-fields -->
 <html lang="ko" data-theme="light">
 <head>
 <meta charset="UTF-8" />
@@ -919,22 +919,61 @@ function formatDeadlineLabel(value) {
   return `${y}-${m}-${day}`;
 }
 
+function pickBidField(item, keys) {
+  for (let i = 0; i < keys.length; i++) {
+    const v = item[keys[i]];
+    if (v !== '' && v !== null && v !== undefined) return v;
+  }
+  return '';
+}
+
+function normalizeOptionalNum(v) {
+  if (v === '' || v === null || v === undefined) return '';
+  const n = Number(String(v).replace(/%/g, '').trim());
+  return isFinite(n) ? n : '';
+}
+
 function normalizeBid(item, i) {
   const deadlineRaw = getBidDeadlineRaw(item);
+  const amountRaw = pickBidField(item, ['amount']);
+  const rateRangeRaw = String(pickBidField(item, ['rateRange']) || '').trim();
+  let rateMin = normalizeOptionalNum(pickBidField(item, ['rateMin']));
+  let rateMax = normalizeOptionalNum(pickBidField(item, ['rateMax']));
+  let rateRange = rateRangeRaw;
+  if (!rateRange && rateMin !== '' && rateMax !== '') {
+    rateRange = Number(rateMin).toFixed(2) + ' ~ ' + Number(rateMax).toFixed(2);
+  }
+
   return {
     ...item,
     id: i + 1,
     deadline: deadlineRaw,
-    amount: (item.amount === '' || item.amount === null || item.amount === undefined)
+    amount: (amountRaw === '' || amountRaw === null || amountRaw === undefined)
       ? ''
-      : (Number(item.amount) || 0),
-    score:    Number(item.score)   || 0,
+      : (Number(amountRaw) || 0),
+    score: Number(item.score) || 0,
     restrict: item.restrict === true
            || item.restrict === 'TRUE'
            || item.restrict === '있음'
            || item.restrict === 'Y',
-    grade:    String(item.grade).trim().toUpperCase(),
+    grade: String(item.grade).trim().toUpperCase(),
     detailUrl: item.detailUrl || 'https://www.g2b.go.kr/',
+    rate: normalizeOptionalNum(pickBidField(item, ['rate'])),
+    reliability: String(pickBidField(item, ['reliability']) || '').trim(),
+    rateMin: rateMin,
+    rateMax: rateMax,
+    rateRange: rateRange,
+    avgParticipants: normalizeOptionalNum(pickBidField(item, ['avgParticipants'])),
+    competitionLevel: String(pickBidField(item, ['competitionLevel']) || '').trim(),
+    ownerRate: normalizeOptionalNum(pickBidField(item, ['ownerRate'])),
+    ownerCount: normalizeOptionalNum(pickBidField(item, ['ownerCount'])),
+    ownerReliability: String(pickBidField(item, ['ownerReliability']) || '').trim(),
+    aggressiveRate: normalizeOptionalNum(pickBidField(item, ['aggressiveRate'])),
+    aggressiveAmount: normalizeOptionalNum(pickBidField(item, ['aggressiveAmount'])),
+    recommendedRate: normalizeOptionalNum(pickBidField(item, ['recommendedRate'])),
+    recommendedAmount: normalizeOptionalNum(pickBidField(item, ['recommendedAmount'])),
+    safeRate: normalizeOptionalNum(pickBidField(item, ['safeRate'])),
+    safeAmount: normalizeOptionalNum(pickBidField(item, ['safeAmount'])),
   };
 }
 
@@ -972,7 +1011,7 @@ function hasBaseAmount(b) {
 }
 function strategyNum(v) {
   if (v === '' || v === null || v === undefined) return null;
-  const n = Number(v);
+  const n = Number(String(v).replace(/%/g, '').trim());
   return isFinite(n) ? n : null;
 }
 function fmtPct(v) {
@@ -992,6 +1031,19 @@ function displayVal(v, fallback) {
 function displayPctVal(v) {
   const n = strategyNum(v);
   return n === null ? '—' : fmtPct(n);
+}
+function displayExpectedRateVal(v) {
+  const n = strategyNum(v);
+  if (n === null || n === 0) return '—';
+  return fmtPct(n);
+}
+function formatRateRangeDisplay(b) {
+  const direct = String(b.rateRange || '').trim();
+  if (direct) return esc(direct);
+  const min = strategyNum(b.rateMin);
+  const max = strategyNum(b.rateMax);
+  if (min === null || max === null) return '—';
+  return esc(min.toFixed(2) + ' ~ ' + max.toFixed(2));
 }
 function displayNumVal(v) {
   const n = strategyNum(v);
@@ -1089,11 +1141,11 @@ function renderModalReferenceMetrics(b) {
     <div class="modal-reference-metrics">
       <div class="modal-hero-item">
         <div class="modal-hero-label">추천사정률범위</div>
-        <div class="modal-hero-value hero-range">${displayVal(b.rateRange)}</div>
+        <div class="modal-hero-value hero-range">${formatRateRangeDisplay(b)}</div>
       </div>
       <div class="modal-hero-reference">
         <div class="modal-hero-label">예상낙찰률</div>
-        <div class="modal-hero-value">${displayPctVal(b.rate)}</div>
+        <div class="modal-hero-value">${displayExpectedRateVal(b.rate)}</div>
         <div class="modal-hero-caption">과거 평균 기반 참고값입니다.</div>
       </div>
     </div>
@@ -1176,7 +1228,19 @@ function daysLeft(d) {
   if (!deadline) return 999;
   return Math.ceil((deadline - Date.now()) / 86400000);
 }
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function findBidForDetail(key) {
+  if (key === null || key === undefined || key === '') return null;
+  const text = String(key).trim();
+  let bid = BIDS.find(x => String(x.no || '').trim() === text);
+  if (bid) return bid;
+  const num = Number(text);
+  if (isFinite(num)) bid = BIDS.find(x => x.id === num);
+  return bid || null;
+}
 
 const ZONE_EMO = {대구:'🏙️',경북:'🌾',인천:'⚓',서울:'🗼',부산:'🌊'};
 const TYPE_EMO = {토목:'⛏️',포장:'🛣️',상하수도:'💧',철근콘크리트:'🏗️'};
@@ -1254,7 +1318,7 @@ function renderCard(b, delay) {
       <div class="reason-box">${ico.info} <span>${esc(b.reason)}</span></div>
       ${renderStrategySection(b, false)}
       <div class="card-btns">
-        <button class="btn btn-outline" onclick="showDetail(${b.id})">${ico.search} 상세보기</button>
+        <button class="btn btn-outline" onclick="showDetail(${JSON.stringify(b.no)})">${ico.search} 상세보기</button>
         <button class="btn btn-fill" onclick="openG2b(${b.id})">${ico.ext} 나라장터</button>
       </div>
     </div>
@@ -1358,8 +1422,8 @@ function toggleC() {
 }
 
 /* ═══ 상세 모달 ══════════════════════════════════════════════ */
-function showDetail(id) {
-  const b = BIDS.find(x => x.id === id);
+function showDetail(key) {
+  const b = findBidForDetail(key);
   if (!b) return;
   const days = daysLeft(b.deadline);
   const gradeLabel = b.grade === 'A' ? '강 추' : b.grade === 'B' ? '검 토' : '제 외';
